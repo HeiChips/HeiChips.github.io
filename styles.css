@@ -331,28 +331,28 @@ h7 {
         border: 1px solid black;
 }
 
-.sponsor-image-container1{
+.support-image-container1{
  position: relative;
   /* Set the desired width and height of the image container */
   width: 300px;
   height: auto;
   overflow: hidden; /* To clip any overflow when the image is fixed */
 }
-.sponsor-image-container2{
+.support-image-container2{
  position: relative;
   /* Set the desired width and height of the image container */
   width: 300px;
   height: auto;
   overflow: hidden; /* To clip any overflow when the image is fixed */
 }
-.sponsor-image-container3{
+.support-image-container3{
  position: relative;
   /* Set the desired width and height of the image container */
   width: 300px;
   height: auto;
   overflow: hidden; /* To clip any overflow when the image is fixed */
 }
-.sponsor-image1{
+.support-image1{
 	float: top;
 	margin-right: 10px;
 	width: 98%;
@@ -362,7 +362,7 @@ h7 {
         left: 0px;
         border: 1px solid gray;
 }
-.sponsor-image2{
+.support-image2{
 	float: top;
 	margin-right: 10px;
 	width: 98%;
@@ -372,7 +372,7 @@ h7 {
         left: 0px;
         border: 1px solid gray;
 }
-.sponsor-image3{
+.support-image3{
 	float: top;
 	margin-right: 10px;
 	width: 98%;
