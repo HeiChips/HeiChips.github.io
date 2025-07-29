@@ -309,6 +309,17 @@ h7 {
     border-radius: 10px;
 }
 
+.terminal {
+  background-color: #b3b3b3;
+  color: #000000;
+  padding: 0.5em 1em;
+  margin: 0;
+  font-family: monospace;
+  font-size: 0.95em;
+  line-height: 1.4;
+  border-radius: 4px;
+}
+
 .venue-image-container img{
 	float: top;
 	margin-right: 10px;
