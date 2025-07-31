@@ -282,34 +282,34 @@ Hotel Central and the IBIS are close to the main train station and in walking di
                         hackathon. They therefore have no
             dependencies with the previously mentioned tools.</h3>
             <h5>Chisel</h5>
-            <li>
-                <a href="https://www.chisel-lang.org/docs/installation"
-                        target="_blank">Installation</a> 
-
-            </li>
-            <h5>Scala CLI</h5>
-            Download and execute the setup script:</br></br>
-            <div class="terminal">
-                curl -sSLf https://scala-cli.virtuslab.org/get | sh
-            </div>
-            <h5>Chisel Example</h5>
-            Download the example:</br></br>
-            <!-- NOTE: The following will overflow on a narrow screen, but we
-                       can keep it for now.
-            -->
-            <div class="terminal">
-                curl -O -L https://github.com/chipsalliance/chisel/releases/latest/download/chisel-example.scala
-            </div>
-            </br>
-
-            Execute the example:</br></br>
-            <div class="terminal">
-                scala-cli chisel-example.scala
-            </div>
-            </br>
+            <ul style="padding-left: 20px;">
+              <li>
+                First install <a href="https://www.chisel-lang.org/docs/installation"
+                        target="_blank">Chisel</a> itself.
+              </li>
+              <li>
+                <strong>Scala CLI</strong><br><br>
+                Download and execute the setup script:<br><br>
+                <div class="terminal">
+                  curl -sSLf https://scala-cli.virtuslab.org/get | sh
+                </div>
+              </li>
+              <li>
+                <strong>Chisel Example</strong><br><br>
+                Download the example:<br><br>
+                <div class="terminal">
+                  curl -O -L https://github.com/chipsalliance/chisel/releases/latest/download/chisel-example.scala
+                </div>
+                <br>
+                Execute the example:<br><br>
+                <div class="terminal">
+                  scala-cli chisel-example.scala
+                </div>
+              </li>
+            </ul>
 
             <h5>CIRCT</h5>
-            <b>Note:</b>During the setup, you will need to build
+            <b>Note:</b> During the setup, you will need to build
             LLVM. This can take several hours,
             depending on your machine.
             Also, when configuring CIRCT with cmake (step 4), make
