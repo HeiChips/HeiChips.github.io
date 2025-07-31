@@ -320,6 +320,14 @@ h7 {
   border-radius: 4px;
 }
 
+code {
+  background-color: #b3b3b3;
+  padding: 2px 4px;
+  font-size: 90%;
+  font-family: monospace;
+  border-radius: 4px;
+}
+
 .venue-image-container img{
 	float: top;
 	margin-right: 10px;
