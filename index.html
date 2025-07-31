@@ -278,7 +278,49 @@ Hotel Central and the IBIS are close to the main train station and in walking di
                 href="https://github.com/FPGA-Research/FABulator?tab=readme-ov-file#getting-started"
                     target="_blank">Installation</a> </li>
 
+        <h3>The following tools are only needed for the CIRCT lab, but not for the
+                        hackathon. They therefore have no
+            dependencies with the previously mentioned tools.</h3>
+            <h5>Chisel</h5>
+            <li>
+                <a href="https://www.chisel-lang.org/docs/installation"
+                        target="_blank">Installation</a> 
 
+            </li>
+            <h5>Scala CLI</h5>
+            Download and execute the setup script:</br></br>
+            <div class="terminal">
+                curl -sSLf https://scala-cli.virtuslab.org/get | sh
+            </div>
+            <h5>Chisel Example</h5>
+            Download the example:</br></br>
+            <!-- NOTE: The following will overflow on a narrow screen, but we
+                       can keep it for now.
+            -->
+            <div class="terminal">
+                curl -O -L https://github.com/chipsalliance/chisel/releases/latest/download/chisel-example.scala
+            </div>
+            </br>
+
+            Execute the example:</br></br>
+            <div class="terminal">
+                scala-cli chisel-example.scala
+            </div>
+            </br>
+
+            <h5>CIRCT</h5>
+            <b>Note:</b>During the setup, you will need to build
+            LLVM. This can take several hours,
+            depending on your machine.
+            Also, when configuring CIRCT with cmake (step 4), make
+            sure to set the
+            flag <code>-<nobr>DCIRCT_SLANG_FRONTEND_ENABLED=ON</nobr></code>. 
+
+            <li>
+                <a href="https://circt.llvm.org/docs/GettingStarted/#setting-this-up"
+                        target="_blank">Installation</a> 
+
+            </li>
     </div>
     </section>
 
