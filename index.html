@@ -15,8 +15,8 @@
         <a href="#program-section" class="nav-link">Program</a>
         <!--a href="#instructions-section" class="nav-link">Instructions</a-->
         <a href="#tools-section" class="nav-link">Tools</a>
+            <a href="#vm-section" class="nav-link">Virtual Machine</a>
         <a href="#presentations-section" class="nav-link">Presentations</a>
-        <!--a href="#materials-section" class="nav-link">Slides and Materials</a-->
         <a href="#past-events-section" class="nav-link">Past Events</a>
         <a href="#award-section" class="nav-link">HeiChips Award</a>
         <!--a href="#venue-section" class="nav-link">Venue</a-->
@@ -338,6 +338,57 @@ Hotel Central and the IBIS are close to the main train station and in walking di
 
             </li>
     </div>
+    </section>
+
+    <!-- Virtual Machine -->
+    <section id="vm-section" class="wave-animation">
+        <h2>Virtual Machine</h2></br>
+            The virtual machine (VM) image contains all the required
+            software for the summer school. Here, you can find the
+            instructions on downloading and installing VM software
+            like VirtualBox and KVM/QEMU, as well as the
+            corresponding VM-images. </br>
+
+        <h3>Quick notes on the installation of Virtual Machines
+            (Virtual Box and KVM/QEMU)</h3>
+        <h3>1. Virtual Machine Software (Host)</h3>
+            The VM image is available in VDI-format for VirtualBox and
+            QCOW2-Format for KVM/QEMU.                         If you have
+            already VirtualBox or KVM/QEMU installed, continue to
+            <a href="#extract-vm-id" class="nav-link">(2)</a>.
+            Decide which VM software to install. If unsure, use VirtualBox
+            (easier installation). Download VirtualBox for your system 
+            <a href="https://www.virtualbox.org/wiki/Downloads"
+                    target="_blank">here</a>.
+            Install and follow the instructions in the link provided.
+        <h3>Links for the Virtual Machine Images:</h3>
+            The VM-image is available in two formats. You need only
+            the one that  fits to the VM software that you
+            installed. The Virtual Box Virtual Machine image is
+            compressed in 7-Zip format and available as a Virtual
+            Box Image (VDI) and KVM (QCOW). get it here:
+            <li>
+                <a href="https://www.dropbox.com/scl/fi/w1grfcv5zhyitpwg1jcuw/summer_school_2024.qcow2-Hiko.7z?rlkey=eikp90srp7mzcotrgzlcpclyl&e=1&dl=0" target="_blank">Compressed KVM VM-Image</a> 
+            </li>
+            <li>
+                <a href="https://www.dropbox.com/scl/fi/b5xlqjrock0hmgvulak3i/summer_school_2024.vdi-Hiko.7z?rlkey=7jyd377ioueiwaavf63n0ini1&e=1&dl=0" target="_blank">Compressed VDI VM-Image</a> 
+            </li>
+            <h3 id=extract-vm-id>2. Extract Virtual Machine</h3>
+                The Virtual Box VM needs to be extracted before starting. If you
+                haven't installed 7-Zip previously, install it using the appropriate
+                binary provided in the package (Linux, MacOS, Windows,
+                32- and 64-bit). You can download 7-Zip from
+                <a href="https://www.7-zip.org/download.html" target="_blank">here</a>.
+                Then extract the image using 7-Zip.
+            <h3>3. Start Virtual Machine</h3>
+                Using the VM software of your choice, create a
+                new VM which has at least two CPUs and 16GB of RAM (more
+                is better), and open the corresponding image. Then,
+                start the VM and you should see the Debian-system
+                booting to the graphical login screen. Done! Use the
+                following credentials to log into the VM:</br> 
+                <b>Username:</b> user</br>
+                <b>Password/root password:</b> heiChips2025
     </section>
 
     <!-- Presentations -->
