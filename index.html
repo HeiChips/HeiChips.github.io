@@ -23,6 +23,7 @@
         <a href="#organizers-section" class="nav-link">Organizers and Contacts</a>
         <!--a href="#contact-section" class="nav-link">Contact</a-->
         <a href="#lecturers-section" class="nav-link">Lecturers</a>
+        <a href="#impressions-section" class="nav-link">Impressions</a>
     </nav>
     <img class="banner-image" src="./logos/bgimage.jpg" alt="Banner Image">
     <!-- Acknowledgment -->
@@ -665,13 +666,132 @@ visualizations. </td>
 
     <!-- Award -->
     <section id="award-section" class="wave-animation">
-        <h2>HeiChips Summer School 2025 Award</h2>    
-    <div>
-    The best project award for the HeiChips 2025 Summer School and Hackathon will be announced on the last day of the event 
-	</div>
-    <!--div class="award-image-container">
-        <img src="images/award.png" alt="award">
-    </div-->
+        <!-- <h2>HeiChips Summer School 2025 Award</h2>     -->
+        <h2>Hackathon Projects</h1>
+
+            <p>We had a long list of impressive hackathon projects this year:</p>
+
+            <ul>
+              <li>
+                <b>bAG O' Life</b>: Video output + Cellular Automata – Game of Life using two framebuffers. Allows setting pixels and rules via some input connection. The video output is implemented in the eFPGA.
+                <div class="links">
+                  <a href="https://github.com/heliosfa/heichips25-template" target="_blank">Repository</a>
+                  <!-- <a href="#" target="_blank">Presentation</a> -->
+                </div>
+              </li>
+
+              <li>
+                <b>USB Core</b>: A simple USB peripheral using GPIO pins. Also includes the macro of the "spad_env_f_bit" which is part of a TRNG implementation by Hossam O. Ahmed.
+                <div class="links">
+                  <a href="https://github.com/leardilap/heichips25-usb_cdc" target="_blank">Repository</a>
+                  <a href="./presentations-pdf/projects/HEICHIPS_2025_USB_CDC_Luis_Ardila.pdf" target="_blank">Presentation</a>
+                </div>
+              </li>
+
+              <li>
+                <b>Software Defined Radio Accelerator</b>: Targeting some SDR application designs at ASIC level.
+                <div class="links">
+                  <a href="https://github.com/RainChinChao/heichips25_SDR_new" target="_blank">Repository (placeholder)</a>
+                  <a href="./presentations-pdf/projects/SDR_Hardware_Acceleration_YUQIN_ZHAO.pdf" target="_blank">Presentation</a>
+                </div>
+              </li>
+
+              <li>
+                <b>PUDDING (Public Use DAC for Icy Nano-ampere current Generation)</b>: Current DAC to generate sias-signals for semiconductor sensor dots or flux control and superconducting Qubits.
+                <div class="links">
+                  <a href="https://github.com/jobueh/PUDDING" target="_blank">Repository</a>
+                  <!-- <a href="#" target="_blank">Presentation</a> -->
+                </div>
+              </li>
+
+              <li>
+                <b>8 bit CPU + eFPGA/sorter</b>: Small CPU with flexible/reconfigurable instruction(s).
+                <div class="links">
+                  <a href="https://github.com/bamalte/heiChips2025_project" target="_blank">Repository</a>
+                  <a href="./presentations-pdf/projects/8_bit_CPU_and_eFPGA-sorter_Philippos_Papaphilippou.pdf" target="_blank">Presentation</a>
+                </div>
+              </li>
+
+              <li>
+                <b>FazyRV-ExoTiny CCX</b>: FazyRV bit-serial RISC-V core SoC (existing) — add bit-serial custom instruction interface and peripherals.
+                <div class="links">
+                  <a href="https://github.com/meiniKi/heichips25-fazyrv-exotiny" target="_blank">Repository</a>
+                  <a href="./presentations-pdf/projects/10_FazyRV-ExoTiny_CCX_Meinhard_Kissich.pdf" target="_blank">Presentation</a>
+                </div>
+              </li>
+
+              <li>
+                <b>Tiny systolic array</b>: MAC operation–based Systolic Array with Clock Gating; provides a 4×4 array with 4-bit PEs.
+                <div class="links">
+                  <a href="https://github.com/anismoncef/heichips25_systolicArray4x4" target="_blank">Repository</a>
+                  <!-- <a href="#" target="_blank">Presentation</a> -->
+                </div>
+              </li>
+
+              <li>
+                <b>Waveform + Tone Generation using CORDIC Algorithm</b>: Generation of different waveforms/activation functions using the CORDIC algorithms along with displaying over VGA.
+                <div class="links">
+                  <a href="https://github.com/Guha37/heichips25_CORDIC" target="_blank">Repository</a>
+                  <a href="./presentations-pdf/projects/13_Waveform_and_Tone_Generation_using_CORDIC_Algorithm.pdf" target="_blank">Presentation</a>
+                </div>
+              </li>
+
+              <li>
+                <b>Snitch (32b RISC-V Integer Core)</b>: A tiny single pipeline stage RISC-V processor.
+                <div class="links">
+                  <a href="https://github.com/DiyouS/heichips_25_snitch_core/tree/main" target="_blank">Repository</a>
+                  <a href="./presentations-pdf/projects/15_Snitch_Diyou_Shen.pdf" target="_blank">Presentation</a>
+                </div>
+              </li>
+
+              <li>
+                <b>Fancy ALU (FALU)</b>: ALU with special operations like Bit Reversal, CLZ, and MAC.
+                <div class="links">
+                  <a href="https://github.com/christophhuebner/FALU/tree/main" target="_blank">Repository</a>
+                  <!-- <a href="#" target="_blank">Presentation</a> -->
+                </div>
+              </li>
+              <li>
+                <b>Programmable PWM (PPWM)</b>: ALU with special operations like Bit Reversal, CLZ, and MAC.
+                <div class="links">
+                  <a href="https://github.com/towoe/heichips25-ppwm" target="_blank">Repository</a>
+                  <!-- <a href="#" target="_blank">Presentation</a> -->
+                </div>
+              </li>
+              <li>
+                <b>Simple 10 Mbps Ethernet-over-LVDS TX PHY</b>:RMII interface on the digital side (transmit only), custom LVDS on the analog side.
+                <div class="links">
+                  <a href="https://github.com/fsayas/heichips25-ethernet/tree/analog" target="_blank">Repository</a>
+                  <!-- <a href="#" target="_blank">Presentation</a> -->
+                </div>
+              </li>
+            </ul>
+
+            <div class="note">
+                    <p>It was really hard for the judges (<em><a href="#krzysztof-id">Krzysztof Herman </a></em> and <em>Joscha Ilmberger</em>)
+                        to pick a specific project for the best project award and the competition was very tight with many cool and well executed projects.
+                        However, two projects stood slightly out due to their completeness (including testing) and engineering effort and it was decided
+                        to split the HeiChips Best Project award among:</p>
+
+            <p>
+              <b>“FazyRV-ExoTiny CCX”</b> by Meinhard Kissich, Matthias Musch, Sabih Muhammad, Spandan Das and Marcin Kowalczyk
+            </p>
+            <div class="award-image-container">
+              <a href="./images/winners/fazyrv-group.jpg" target="_blank">
+                <img src="./images/winners/fazyrv-group.jpg" alt="FazyRV ExoTiny CCX winners">
+              </a>
+            </div>
+
+            <p>
+              <b>“Waveform + Tone Generation using CORDIC Algorithm”</b> by Shankaranarayanan H, Naveen Dhage Shankar, Guha H, and Ketan Sanjay Chaudhari
+            </p>
+            <div class="award-image-container">
+              <a href="./images/winners/cordic-group.jpg" target="_blank">
+                <img src="./images/winners/cordic-group.jpg" alt="CORDIC Algorithm winners">
+              </a>
+            </div>
+            <p><b>Big congratulations to all winners!</b></p>
+            </div>
     </section>
 
     <!-- Contact -->
@@ -787,6 +907,61 @@ We will then investigate the methods of using ISA subsetting, hardened custom in
             </div>
 
         </div>
+    </section>
+    <section id="impressions-section" class="wave-animation">
+    
+    <h2>Impressions</h2>
+    <div class="gallery">
+      <a href="./images/impressions/IMG_20250804_140957.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250804_140957.jpg" alt="Impression 0" width="400">
+      </a>
+      <a href="./images/impressions/IMG_20250805_114041.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250805_114041.jpg" alt="Impression 1" width="400">
+      </a>
+      <a href="./images/impressions/IMG_20250806_085831.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250806_085831.jpg" alt="Impression 2" width="400">
+      </a>
+      <a href="./images/impressions/IMG_20250806_093713.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250806_093713.jpg" alt="Impression 3" width="400">
+      </a>
+      <a href="./images/impressions/IMG_20250807_091952.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250807_091952.jpg" alt="Impression 4" width="400">
+      </a>
+      <a href="./images/impressions/IMG_20250807_224351.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250807_224351.jpg" alt="Impression 5" width="400">
+      </a>
+      <a href="./images/impressions/IMG_20250808_152754.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250808_152754.jpg" alt="Impression 6" width="400">
+      </a>
+      <a href="./images/impressions/IMG_20250808_153337.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250808_153337.jpg" alt="Impression 7" width="400">
+      </a>
+      <a href="./images/impressions/IMG_20250808_155343.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250808_155343.jpg" alt="Impression 8" width="400">
+      </a>
+      <a href="./images/impressions/IMG_20250808_155918.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250808_155918.jpg" alt="Impression 9" width="400">
+      </a>
+      <a href="./images/impressions/IMG_20250808_160652.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250808_160652.jpg" alt="Impression 10" width="400">
+      </a>
+      <a href="./images/impressions/IMG_20250808_161148.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250808_161148.jpg" alt="Impression 11" width="400">
+      </a>
+      <a href="./images/impressions/IMG_20250808_162720.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250808_162720.jpg" alt="Impression 12" width="400">
+      </a>
+      <a href="./images/impressions/IMG_20250808_164130.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250808_164130.jpg" alt="Impression 13" width="400">
+      </a>
+      <a href="./images/impressions/IMG_20250808_164256.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250808_164256.jpg" alt="Impression 14" width="400">
+      </a>
+      <a href="./images/impressions/IMG_20250808_165258.jpg" target="_blank">
+        <img src="./images/impressions/IMG_20250808_165258.jpg" alt="Impression 15" width="400">
+      </a>
+    </div>
+
     </section>
 
      <!-- Impressions -->
