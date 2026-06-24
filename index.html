@@ -156,7 +156,254 @@ Hotel Central and the IBIS are close to the main train station and in walking di
     <!-- Program -->
     <section id="program-section" class="wave-animation">
         <h2>Program</h2>
-	To be announced soon
+        <div class="cal-legend">
+            <span class="cal-legend-item"><span class="cal-dot cal-cat-general"></span>General</span>
+            <span class="cal-legend-item"><span class="cal-dot cal-cat-lecture"></span>Lecture</span>
+            <span class="cal-legend-item"><span class="cal-dot cal-cat-workshop"></span>Workshop</span>
+            <span class="cal-legend-item"><span class="cal-dot cal-cat-break"></span>Break</span>
+            <span class="cal-legend-item"><span class="cal-dot cal-cat-social"></span>Social</span>
+        </div>
+        <div class="cal-tabs">
+            <button class="cal-tab active" onclick="showDay('mon')">Mon<br><span>Aug 3</span></button>
+            <button class="cal-tab" onclick="showDay('tue')">Tue<br><span>Aug 4</span></button>
+            <button class="cal-tab" onclick="showDay('wed')">Wed<br><span>Aug 5</span></button>
+            <button class="cal-tab" onclick="showDay('thu')">Thu<br><span>Aug 6</span></button>
+            <button class="cal-tab" onclick="showDay('fri')">Fri<br><span>Aug 7</span></button>
+        </div>
+        <div class="cal-grid">
+            <!-- Monday -->
+            <div class="cal-day active" id="day-mon" data-day="mon">
+                <div class="cal-day-header">Mon, Aug 3</div>
+                <div class="cal-slot cal-cat-general">
+                    <span class="cal-time">09:00 – 09:30</span>
+                    <span class="cal-title">Registration &amp; Welcome</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-lecture">
+                    <span class="cal-time">09:30 – 10:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-break">
+                    <span class="cal-time">10:30 – 11:00</span>
+                    <span class="cal-title">Coffee Break</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-lecture">
+                    <span class="cal-time">11:00 – 12:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-break">
+                    <span class="cal-time">12:30 – 14:00</span>
+                    <span class="cal-title">Lunch</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-workshop">
+                    <span class="cal-time">14:00 – 15:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-break">
+                    <span class="cal-time">15:30 – 16:00</span>
+                    <span class="cal-title">Coffee Break</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-workshop">
+                    <span class="cal-time">16:00 – 17:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-social">
+                    <span class="cal-time">Evening</span>
+                    <span class="cal-title">Welcome Dinner</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+            </div>
+            <!-- Tuesday -->
+            <div class="cal-day" id="day-tue" data-day="tue">
+                <div class="cal-day-header">Tue, Aug 4</div>
+                <div class="cal-slot cal-cat-lecture">
+                    <span class="cal-time">09:00 – 10:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-break">
+                    <span class="cal-time">10:30 – 11:00</span>
+                    <span class="cal-title">Coffee Break</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-lecture">
+                    <span class="cal-time">11:00 – 12:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-break">
+                    <span class="cal-time">12:30 – 14:00</span>
+                    <span class="cal-title">Lunch</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-workshop">
+                    <span class="cal-time">14:00 – 15:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-break">
+                    <span class="cal-time">15:30 – 16:00</span>
+                    <span class="cal-title">Coffee Break</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-workshop">
+                    <span class="cal-time">16:00 – 17:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-social">
+                    <span class="cal-time">Evening</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+            </div>
+            <!-- Wednesday -->
+            <div class="cal-day" id="day-wed" data-day="wed">
+                <div class="cal-day-header">Wed, Aug 5</div>
+                <div class="cal-slot cal-cat-lecture">
+                    <span class="cal-time">09:00 – 10:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-break">
+                    <span class="cal-time">10:30 – 11:00</span>
+                    <span class="cal-title">Coffee Break</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-lecture">
+                    <span class="cal-time">11:00 – 12:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-break">
+                    <span class="cal-time">12:30 – 14:00</span>
+                    <span class="cal-title">Lunch</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-workshop">
+                    <span class="cal-time">14:00 – 15:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-break">
+                    <span class="cal-time">15:30 – 16:00</span>
+                    <span class="cal-title">Coffee Break</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-workshop">
+                    <span class="cal-time">16:00 – 17:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-social">
+                    <span class="cal-time">Evening</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+            </div>
+            <!-- Thursday -->
+            <div class="cal-day" id="day-thu" data-day="thu">
+                <div class="cal-day-header">Thu, Aug 6</div>
+                <div class="cal-slot cal-cat-lecture">
+                    <span class="cal-time">09:00 – 10:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-break">
+                    <span class="cal-time">10:30 – 11:00</span>
+                    <span class="cal-title">Coffee Break</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-lecture">
+                    <span class="cal-time">11:00 – 12:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-break">
+                    <span class="cal-time">12:30 – 14:00</span>
+                    <span class="cal-title">Lunch</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-workshop">
+                    <span class="cal-time">14:00 – 15:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-break">
+                    <span class="cal-time">15:30 – 16:00</span>
+                    <span class="cal-title">Coffee Break</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-workshop">
+                    <span class="cal-time">16:00 – 17:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-social">
+                    <span class="cal-time">Evening</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+            </div>
+            <!-- Friday -->
+            <div class="cal-day" id="day-fri" data-day="fri">
+                <div class="cal-day-header">Fri, Aug 7</div>
+                <div class="cal-slot cal-cat-lecture">
+                    <span class="cal-time">09:00 – 10:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-break">
+                    <span class="cal-time">10:30 – 11:00</span>
+                    <span class="cal-title">Coffee Break</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-lecture">
+                    <span class="cal-time">11:00 – 12:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-break">
+                    <span class="cal-time">12:30 – 14:00</span>
+                    <span class="cal-title">Lunch</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-workshop">
+                    <span class="cal-time">14:00 – 15:30</span>
+                    <span class="cal-title">TBA</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-break">
+                    <span class="cal-time">15:30 – 16:00</span>
+                    <span class="cal-title">Coffee Break</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+                <div class="cal-slot cal-cat-general">
+                    <span class="cal-time">16:00 – 17:00</span>
+                    <span class="cal-title">Closing</span>
+                    <span class="cal-location">Room TBA</span>
+                </div>
+            </div>
+        </div>
+        <script>
+        function showDay(day) {
+            document.querySelectorAll('.cal-day').forEach(function(el) {
+                el.classList.remove('active');
+            });
+            document.querySelectorAll('.cal-tab').forEach(function(el) {
+                el.classList.remove('active');
+            });
+            document.getElementById('day-' + day).classList.add('active');
+            document.querySelector('.cal-tab[onclick*="' + day + '"]').classList.add('active');
+        }
+        </script>
     </section>
     <!-- Presentations -->
 
@@ -183,24 +430,29 @@ Hotel Central and the IBIS are close to the main train station and in walking di
         <div class="support-container">
             <div class="support-item">
                 <div class="support-image-container1">
-                    <img src="./logos/hd_logo_small_16cm_rgb.png"
-                            alt="Heidelberg University" class="support-image1">
+                    <a href="https://www.uni-heidelberg.de/en" target="_blank">
+                        <img src="./logos/hd_logo_small_16cm_rgb.png"
+                                alt="Heidelberg University" class="support-image1">
+                    </a>
                 </div>
-                <p><b><a href="https://www.uni-heidelberg.de/en"
-                        target="_blank">Heidelberg University</a></b></p>
+
             </div>
             <div class="support-item">
                 <div class="support-image-container1">
-                    <img src="./logos/BMBFnew.jpg" alt="BMFTR Logo" class="support-image1">
+                    <a href="https://www.bmbf.de/EN/Home/home_node.html" target="_blank">
+                        <img src="./logos/BMBFnew.png" alt="BMFTR Logo" class="support-image1">
+                    </a>
                 </div>
-                <p><b><a href="https://www.bmbf.de/EN/Home/home_node.html" target="_blank">BMFTR</a></b></p>
+
             </div>
             <div class="support-item">
                 <div class="support-image-container1">
-                    <img src="./logos/chip-design-germany.webp"
-                            alt="Chipdesign Germany Logo" class="support-image1">
+                    <a href="https://www.chipdesign-germany.de/en/" target="_blank">
+                        <img src="./logos/chip-design-germany.webp"
+                                alt="Chipdesign Germany Logo" class="support-image1">
+                    </a>
                 </div>
-                <p><b><a href="https://www.chipdesign-germany.de/en/" target="_blank">Chipdesign Germany</a></b></p>
+
             </div>
         </div>
     </section>
