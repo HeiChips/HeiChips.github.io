@@ -12,13 +12,13 @@ body {
 
 /* Scaling the banner image */
 .banner-image {
-    transform: scale(0.985);
-    width: 100%;
+    width: calc(100% - 30px);
     height: auto;
     display: block;
-    border-radius: 10px;
-    border: 2px solid white;
-    /* Alternative: width: 12.5%; height: auto; */
+    border-radius: 15px;
+    border: 1px solid black;
+    margin: 20px 15px 0;
+    box-sizing: border-box;
 }
 
 .lecturer-image {
@@ -61,6 +61,48 @@ section {
   margin-left: 15px;
   border: 1px solid black;
 
+}
+
+/* Hero landing section */
+.hero {
+    text-align: center;
+    padding: 40px 20px;
+    background: linear-gradient(135deg, #1a1a2e, #3d0c11, #8B0000);
+    color: #fff;
+    border: none;
+}
+
+.hero h1 {
+    font-size: 48px;
+    margin: 0 0 8px;
+    color: #fff;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.4);
+}
+
+.hero-subtitle {
+    font-size: 22px;
+    opacity: 0.9;
+    margin: 0 0 4px;
+}
+
+.hero-details {
+    font-size: 18px;
+    opacity: 0.75;
+    margin: 0 0 16px;
+}
+
+.hero a {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.15);
+    padding: 10px 28px;
+    border-radius: 6px;
+    text-decoration: none;
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    transition: background 0.2s;
+}
+
+.hero a:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 h2 {
@@ -328,15 +370,31 @@ code {
   border-radius: 4px;
 }
 
-.venue-image-container img{
-	float: top;
-	margin-right: 10px;
-	width: 300px;
-	height: auto;
-	position: relative;
-        top: 5px;
-        left: 5px;
-        border: 1px solid black;
+.venue-image-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 10px;
+}
+
+.venue-image-container img {
+    height: 250px;
+    width: auto;
+    max-width: 100%;
+    object-fit: cover;
+    border: 1px solid black;
+    border-radius: 6px;
+}
+
+@media (max-width: 768px) {
+    .venue-image-container {
+        flex-direction: column;
+        align-items: stretch;
+    }
+    .venue-image-container img {
+        width: 100%;
+        height: auto;
+    }
 }
 
 .award-image-container img{
@@ -369,14 +427,12 @@ code {
 }
 
 .support-image-container1{
- position: relative;
-  /* Set the desired width and height of the image container */
+  position: relative;
   width: auto;
-  height: 200px;
-  overflow: hidden; /* To clip any overflow when the image is fixed */
+  max-height: 200px;
   display: flex;
-  justify-content: center; /* Centers the image horizontally */
-  align-items: left;
+  justify-content: center;
+  align-items: center;
 }
 .support-image-container2{
  position: relative;
@@ -393,13 +449,12 @@ code {
   overflow: hidden; /* To clip any overflow when the image is fixed */
 }
 .support-image1{
-	float: top;
 	margin-right: 10px;
-	width: 98%;
-	height: 98%;
-	position: relative;
-        top: 0px;
-        left: 0px;
+	max-width: 100%;
+	max-height: 200px;
+	height: auto;
+	width: auto;
+	object-fit: contain;
 }
 .support-image2{
 	float: top;
