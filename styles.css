@@ -593,11 +593,11 @@ code {
 }
 
 /* Style the PDF column to resemble a hyperlink */
-.slick-table td:last-child {
-    color: #007BFF;
-    text-decoration: underline;
-    cursor: pointer;
-}
+/* .slick-table td:last-child { */
+/*     color: #007BFF; */
+/*     text-decoration: underline; */
+/*     cursor: pointer; */
+/* } */
 
 @media screen and (max-width: 768px) {
     .table-container {
