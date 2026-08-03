@@ -8,7 +8,9 @@ on:
       - synchronize
       - closed
 
-concurrency: gh-pages-deploy
+# Serializes all preview runs against each other (they push to the same branch),
+# but stays separate from the main deploy group. See deploy.yml.
+concurrency: gh-pages-deploy-preview
 
 jobs:
   deploy-preview:
