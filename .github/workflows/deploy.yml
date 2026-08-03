@@ -5,7 +5,10 @@ on:
     branches:
       - main
 
-concurrency: gh-pages-deploy
+# Must NOT share a group with preview.yml: merging a PR fires this workflow and
+# the preview cleanup simultaneously, and a later run entering the group cancels
+# whichever one is still queued.
+concurrency: gh-pages-deploy-main
 
 jobs:
   deploy:
