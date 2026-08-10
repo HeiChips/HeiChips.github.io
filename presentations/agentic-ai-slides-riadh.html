@@ -1,0 +1,1596 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Agentic AI for Hardware Design &amp; Verification · HeiChips 2026</title>
+<style>
+/* ============================================================
+   THEME: "silicon dark"
+   ============================================================ */
+:root{
+  --bg:        #0a0f16;
+  --panel:     #111a28;
+  --panel-2:   #0e1520;
+  --hairline:  rgba(255,255,255,.09);
+  --ink:       #f2f6fb;
+  --ink-2:     #aab8ca;
+  --muted:     #6b7a8f;
+  --blue:      #3987e5;   /* series 1 / accent            */
+  --blue-soft: #6da7ec;
+  --orange:    #d95926;   /* series 2                     */
+  --aqua:      #199e70;   /* series 3                     */
+  --good:      #2fbf71;   /* status: pass                 */
+  --bad:       #e05d5d;   /* status: fail                 */
+  --warn:      #e8a33d;   /* status: estimated / caution  */
+  --violet:    #9085e9;
+  --code-bg:   #0b111b;
+  --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  --mono: ui-monospace, "Cascadia Code", "JetBrains Mono", "SF Mono", Menlo, Consolas, monospace;
+}
+*{box-sizing:border-box; margin:0; padding:0}
+html,body{height:100%}
+body{
+  background:var(--bg); color:var(--ink); font-family:var(--sans);
+  overflow:hidden; -webkit-font-smoothing:antialiased;
+}
+
+/* ============================================================
+   STAGE + SLIDES
+   ============================================================ */
+#viewport{position:fixed; inset:0; display:flex; align-items:center; justify-content:center}
+#stage{width:1280px; height:720px; position:relative; flex:none}
+.slide{
+  position:absolute; inset:0; padding:64px 80px 72px;
+  display:flex; flex-direction:column;
+  opacity:0; visibility:hidden; transform:translateY(14px);
+  transition:opacity .38s ease, transform .38s ease, visibility 0s linear .38s;
+  background:
+    radial-gradient(1100px 600px at 78% -10%, rgba(57,135,229,.10), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(144,133,233,.06), transparent 55%),
+    var(--bg);
+}
+.slide.active{opacity:1; visibility:visible; transform:none; transition:opacity .38s ease, transform .38s ease}
+.slide .notes{display:none}
+
+/* subtle chip-grid backdrop */
+.slide::before{
+  content:""; position:absolute; inset:0; pointer-events:none; opacity:.5;
+  background:
+    linear-gradient(rgba(255,255,255,.022) 1px, transparent 1px) 0 0/64px 64px,
+    linear-gradient(90deg, rgba(255,255,255,.022) 1px, transparent 1px) 0 0/64px 64px;
+  mask-image:radial-gradient(ellipse at 50% 40%, #000 30%, transparent 78%);
+}
+.slide>*{position:relative}
+
+/* ============================================================
+   TYPE
+   ============================================================ */
+.kicker{
+  font-size:15px; letter-spacing:.22em; text-transform:uppercase;
+  color:var(--blue-soft); font-weight:600; margin-bottom:14px;
+}
+h1{font-size:56px; line-height:1.08; font-weight:750; letter-spacing:-.015em}
+h2{font-size:40px; line-height:1.12; font-weight:700; letter-spacing:-.012em; margin-bottom:26px}
+h3{font-size:22px; font-weight:650}
+p,li{font-size:22px; line-height:1.45; color:var(--ink-2)}
+strong{color:var(--ink); font-weight:650}
+em{color:var(--ink)}
+.small{font-size:16px; color:var(--muted)}
+.foot{position:absolute; left:80px; right:80px; bottom:34px; font-size:14px; color:var(--muted)}
+.accent{color:var(--blue-soft)} .ok{color:var(--good)} .no{color:var(--bad)} .wr{color:var(--warn)}
+code,.mono{font-family:var(--mono)}
+ul.airy li{margin:14px 0 14px 26px}
+ul.airy li::marker{color:var(--blue)}
+
+/* ============================================================
+   COMPONENTS
+   ============================================================ */
+.cols{display:flex; gap:36px; flex:1; min-height:0}
+.col{flex:1; min-width:0}
+.card{
+  background:var(--panel); border:1px solid var(--hairline); border-radius:14px;
+  padding:24px 26px;
+}
+.card h3{margin-bottom:8px}
+.card p{font-size:18px; line-height:1.45}
+.grid2{display:grid; grid-template-columns:1fr 1fr; gap:20px}
+.grid3{display:grid; grid-template-columns:1fr 1fr 1fr; gap:20px}
+
+.tile{ text-align:center; padding:30px 22px }
+.tile .v{font-size:58px; font-weight:750; letter-spacing:-.02em; color:var(--ink)}
+.tile .l{font-size:17px; color:var(--ink-2); margin-top:8px; line-height:1.35}
+
+.pill{
+  display:inline-block; font-size:14px; font-weight:650; letter-spacing:.05em;
+  padding:3px 12px; border-radius:99px; border:1px solid var(--hairline);
+  color:var(--ink-2); background:rgba(255,255,255,.03);
+}
+.pill.b{color:#9cc3f2; border-color:rgba(57,135,229,.45); background:rgba(57,135,229,.12)}
+.pill.g{color:#7fd7a9; border-color:rgba(47,191,113,.4); background:rgba(47,191,113,.10)}
+.pill.r{color:#f0a0a0; border-color:rgba(224,93,93,.4); background:rgba(224,93,93,.10)}
+.pill.y{color:#f0c98c; border-color:rgba(232,163,61,.4); background:rgba(232,163,61,.10)}
+
+table.tbl{border-collapse:collapse; width:100%}
+table.tbl th{
+  text-align:left; font-size:16px; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted); font-weight:650; padding:10px 18px; border-bottom:1px solid var(--hairline);
+}
+table.tbl td{
+  padding:13px 18px; font-size:20px; color:var(--ink-2);
+  border-bottom:1px solid rgba(255,255,255,.05); vertical-align:top;
+}
+table.tbl td:first-child{color:var(--ink); font-weight:600}
+
+.term{
+  background:var(--code-bg); border:1px solid var(--hairline); border-radius:12px;
+  font-family:var(--mono); font-size:17.5px; line-height:1.62; padding:22px 26px;
+  color:#c8d4e4; overflow:hidden;
+}
+.term .dim{color:#5d6c80} .term .g{color:var(--good)} .term .r{color:var(--bad)}
+.term .y{color:var(--warn)} .term .b{color:#6da7ec} .term .w{color:#eef3f9}
+
+/* fragments (in-slide reveal steps) */
+.frag{opacity:0; transform:translateY(8px); transition:opacity .35s ease, transform .35s ease}
+.frag.on{opacity:1; transform:none}
+
+/* cold-open terminal line animation */
+.tline{opacity:0}
+.slide.play .tline{animation:tin .3s ease forwards}
+@keyframes tin{to{opacity:1}}
+
+/* ============================================================
+   HUD
+   ============================================================ */
+#hud{position:fixed; inset:auto 0 0 0; pointer-events:none; z-index:40}
+#bar{height:3px; background:var(--blue); width:0; transition:width .3s ease}
+#meta{
+  position:fixed; right:18px; bottom:12px; font-size:13px; color:var(--muted);
+  font-family:var(--mono);
+}
+#act{
+  position:fixed; left:18px; bottom:12px; font-size:12px; letter-spacing:.18em;
+  text-transform:uppercase; color:var(--muted);
+}
+
+/* notes overlay */
+#notesbox{
+  position:fixed; top:0; right:0; bottom:0; width:420px; z-index:60;
+  background:rgba(10,15,22,.97); border-left:1px solid var(--hairline);
+  padding:28px; display:none; overflow:auto;
+}
+#notesbox.show{display:block}
+#notesbox h4{font-size:13px; letter-spacing:.2em; text-transform:uppercase; color:var(--blue-soft); margin-bottom:10px}
+#notesbox .nbody{font-size:22px; line-height:1.4; font-weight:650; color:var(--ink)}
+#notesbox #timer{font-family:var(--mono); font-size:26px; color:var(--ink); margin-bottom:18px}
+
+/* help overlay */
+#helpbox{
+  position:fixed; inset:0; z-index:70; display:none; align-items:center; justify-content:center;
+  background:rgba(6,9,14,.8);
+}
+#helpbox.show{display:flex}
+#helpbox .card{width:460px}
+#helpbox td{padding:6px 12px; font-size:17px; color:var(--ink-2)}
+#helpbox td:first-child{font-family:var(--mono); color:var(--ink)}
+
+/* chart tooltip */
+#tip{
+  position:fixed; z-index:80; display:none; pointer-events:none;
+  background:var(--panel); border:1px solid var(--hairline); border-radius:8px;
+  padding:8px 12px; font-size:15px; color:var(--ink);
+  box-shadow:0 6px 24px rgba(0,0,0,.5);
+}
+
+/* theme toggle: deliberately quiet: fades in on hover, or press L */
+#themebtn{
+  position:fixed; right:76px; bottom:8px; z-index:45;
+  background:none; border:none; cursor:pointer;
+  font-size:16px; line-height:1; color:var(--muted); opacity:.28;
+  transition:opacity .25s ease; padding:4px;
+}
+#themebtn:hover{opacity:.9}
+
+/* ============================================================
+   LIGHT THEME: toggled with the L key (class on <html>)
+   Terminal panels intentionally stay dark in light mode.
+   ============================================================ */
+html.light{
+  --bg:        #f6f8fb;
+  --panel:     #ffffff;
+  --panel-2:   #eef2f7;
+  --hairline:  rgba(15,35,70,.14);
+  --ink:       #16202c;
+  --ink-2:     #42536a;
+  --muted:     #72859c;
+  --blue:      #2a78d6;
+  --blue-soft: #1c5cab;
+  --orange:    #eb6834;
+  --aqua:      #1baf7a;
+  --good:      #178a4c;
+  --bad:       #c34343;
+  --warn:      #a86a10;
+  --violet:    #4a3aa7;
+  /* --code-bg unchanged: terminals stay dark */
+}
+html.light .slide{
+  background:
+    radial-gradient(1100px 600px at 78% -10%, rgba(42,120,214,.07), transparent 60%),
+    radial-gradient(900px 500px at -10% 110%, rgba(74,58,167,.05), transparent 55%),
+    var(--bg);
+}
+html.light .slide::before{
+  background:
+    linear-gradient(rgba(15,35,70,.035) 1px, transparent 1px) 0 0/64px 64px,
+    linear-gradient(90deg, rgba(15,35,70,.035) 1px, transparent 1px) 0 0/64px 64px;
+}
+html.light .card{box-shadow:0 1px 3px rgba(15,30,60,.06)}
+html.light table.tbl td{border-bottom-color:rgba(15,35,70,.08)}
+html.light .pill{background:rgba(15,35,70,.05)}
+html.light .pill.b{color:#1c5cab; border-color:rgba(42,120,214,.45); background:rgba(42,120,214,.09)}
+html.light .pill.g{color:#157a44; border-color:rgba(23,138,76,.4); background:rgba(23,138,76,.09)}
+html.light .pill.r{color:#a53a3a; border-color:rgba(195,67,67,.4); background:rgba(195,67,67,.08)}
+html.light .pill.y{color:#8a5a10; border-color:rgba(168,106,16,.4); background:rgba(168,106,16,.09)}
+html.light .term{border-color:rgba(15,35,70,.3)}
+html.light #notesbox{background:rgba(248,250,253,.97)}
+html.light #helpbox{background:rgba(20,30,45,.45)}
+html.light #tip{box-shadow:0 6px 24px rgba(30,50,80,.25)}
+/* SVG diagrams use fixed hex attributes: remap them per theme.
+   Series colors move to the light-mode steps of the same palette. */
+html.light svg [fill="#111a28"]{fill:#ffffff}
+html.light svg [stroke="#3a4658"]{stroke:#a9b6c9}
+html.light svg [fill="#f2f6fb"]{fill:#16202c}
+html.light svg [fill="#aab8ca"]{fill:#42536a}
+html.light svg [fill="#9cc3f2"]{fill:#1c5cab}
+html.light svg [fill="#7ba7d8"]{fill:#31619b}
+html.light svg [fill="#7fd7a9"]{fill:#157a44}
+html.light svg [fill="#5d8f7c"]{fill:#3f7057}
+html.light svg [stroke="#2a3444"]{stroke:#dde4ec}
+html.light svg [fill="#3987e5"]{fill:#2a78d6}
+html.light svg [stroke="#3987e5"]{stroke:#2a78d6}
+html.light svg [fill="#199e70"]{fill:#1baf7a}
+html.light svg [stroke="#199e70"]{stroke:#1baf7a}
+html.light svg [fill="#d95926"]{fill:#eb6834}
+html.light svg [stroke="#d95926"]{stroke:#eb6834}
+html.light svg [fill="#2fbf71"]{fill:#178a4c}
+html.light svg [stroke="#2fbf71"]{stroke:#178a4c}
+html.light svg [fill="#e05d5d"]{fill:#c34343}
+html.light svg [stroke="#e05d5d"]{stroke:#c34343}
+
+/* citations: superscript markers + bottom sources panel (press C) */
+sup.cref{font-size:.6em; color:var(--blue-soft); font-weight:650; margin-left:1px}
+ul.blist{margin:8px 0 0 18px}
+ul.blist li{font-size:16.5px; line-height:1.42; margin:5px 0; color:var(--ink-2)}
+ul.blist li::marker{color:var(--blue)}
+.slide .cites{display:none}
+#citesbox{
+  position:fixed; left:0; right:0; bottom:0; max-height:46%; z-index:65;
+  background:rgba(10,15,22,.97); border-top:1px solid var(--hairline);
+  padding:18px 30px 24px; display:none; overflow:auto;
+}
+#citesbox.show{display:block}
+#citesbox h4{font-size:13px; letter-spacing:.2em; text-transform:uppercase; color:var(--blue-soft); margin-bottom:6px}
+#citesbox ol{margin:6px 0 0 22px}
+#citesbox li{font-size:15px; color:var(--ink-2); margin:6px 0; line-height:1.45}
+#citesbox a{color:var(--blue-soft); text-decoration:none}
+#citesbox a:hover{text-decoration:underline}
+html.light #citesbox{background:rgba(248,250,253,.97)}
+
+/* spotlight handoff: the most recently revealed .spot card is blue;
+   earlier ones fall back to normal card styling */
+.spot.hl{border-color:rgba(57,135,229,.55); background:rgba(57,135,229,.09)}
+html.light .spot.hl{border-color:rgba(42,120,214,.55); background:rgba(42,120,214,.08)}
+
+/* translucent card tints */
+.tint-blue{background:rgba(57,135,229,.08); border-color:rgba(57,135,229,.35)}
+.tint-aqua{background:rgba(25,158,112,.09); border-color:rgba(25,158,112,.38)}
+.tint-orange{background:rgba(217,89,38,.09); border-color:rgba(217,89,38,.38)}
+.tint-violet{background:rgba(144,133,233,.09); border-color:rgba(144,133,233,.4)}
+.tint-warn{background:rgba(232,163,61,.08); border-color:rgba(232,163,61,.38)}
+.tint-red{background:rgba(224,93,93,.08); border-color:rgba(224,93,93,.38)}
+html.light .tint-blue{background:rgba(42,120,214,.07); border-color:rgba(42,120,214,.4)}
+html.light .tint-aqua{background:rgba(27,175,122,.09); border-color:rgba(27,175,122,.45)}
+html.light .tint-orange{background:rgba(235,104,52,.08); border-color:rgba(235,104,52,.4)}
+html.light .tint-violet{background:rgba(74,58,167,.07); border-color:rgba(74,58,167,.35)}
+html.light .tint-warn{background:rgba(168,106,16,.08); border-color:rgba(168,106,16,.4)}
+html.light .tint-red{background:rgba(195,67,67,.07); border-color:rgba(195,67,67,.4)}
+
+/* ============================================================
+   PRINT: one page per slide (use Chrome "Save as PDF")
+   ============================================================ */
+@media print{
+  html,body{overflow:visible; background:var(--bg)}
+  #viewport{position:static; display:block}
+  #stage{width:1280px; height:auto}
+  .slide{
+    position:relative; opacity:1 !important; visibility:visible !important;
+    transform:none !important; width:1280px; height:720px;
+    page-break-after:always; break-after:page;
+  }
+  .frag{opacity:1 !important; transform:none !important}
+  .tline{opacity:1 !important; animation:none !important}
+  #hud,#meta,#act,#notesbox,#helpbox,#tip{display:none !important}
+  @page{size:1280px 720px; margin:0}
+}
+</style>
+</head>
+<body>
+
+<div id="viewport"><div id="stage">
+
+<!-- ════════════════════════════════════════════════════════════
+     0 · COLD OPEN · the agent transcript
+     ════════════════════════════════════════════════════════════ -->
+<section class="slide manual-play" data-act="">
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center">
+    <div class="term" style="font-size:19px">
+      <div class="tline" style="animation-delay:.4s"><span class="dim">$</span> <span class="w">chipchamp</span> <span class="y">"the FIFO smoke test is failing: find it, fix it, prove it"</span></div>
+      <div class="tline" style="animation-delay:1.6s"><span class="b">⚙ sim.run</span> tb_sync_fifo <span class="dim">→</span> <span class="r">J-0021 · FAIL</span> <span class="dim">· fifo data mismatch @220000 exp=a001 got=a000</span></div>
+      <div class="tline" style="animation-delay:2.9s"><span class="b">⚙ wave.compare</span> J-0021 <span class="dim">vs</span> golden <span class="dim">→</span> first divergence: <span class="w">dut.rd_data</span> @ 45000</div>
+      <div class="tline" style="animation-delay:4.2s"><span class="b">⚙ design.cone</span> rd_data <span class="dim">→</span> <span class="w">assign rd_data = mem[wptr];</span></div>
+      <div class="tline" style="animation-delay:5.6s"><span class="y">✱ root cause:</span> rd_data is driven from <span class="r">mem[wptr]</span> instead of <span class="g">mem[rptr]</span></div>
+      <div class="tline" style="animation-delay:6.9s"><span class="b">✎ edit</span> sync_fifo.sv <span class="dim">(1 line changed)</span></div>
+      <div class="tline" style="animation-delay:8.0s"><span class="g">✔</span> lint&nbsp; <span class="g">✔</span> smoke_sim&nbsp; <span class="g">✔</span> affected_regress&nbsp; <span class="g">✔</span> coverage_baseline&nbsp; <span class="g">✔</span> no_gaming</div>
+      <div class="tline" style="animation-delay:9.2s"><span class="g">✔ report.done accepted</span></div>
+      <div class="tline" style="animation-delay:10.2s"><span class="w">🔏 evidence bundle signed</span> <span class="dim">sha256:845bc27a…</span> verify: <span class="g">True</span></div>
+    </div>
+    <div class="frag" style="margin-top:44px; text-align:center">
+      <div style="font-size:38px; font-weight:700; letter-spacing:-.01em">No human read the waveform.</div>
+    </div>
+    <div class="frag" style="margin-top:14px; text-align:center">
+      <div style="font-size:24px" class="accent">That is what this talk is about.</div>
+    </div>
+  </div>
+  <aside class="notes">Say nothing for the first ~10 seconds; let the transcript play. Then: "An agent just triaged a failing simulation, walked the fan-in cone, found a one-line RTL bug, fixed it, re-ran the gates, and signed a tamper-evident evidence bundle. No human read the waveform." Beat. "That is what this talk is about." (This transcript is the replayable demo from my own tool: every step is a real tool run. Be ready to say so if asked.)</aside>
+</section>
+
+<!-- 1 · TITLE -->
+<section class="slide" data-act="">
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center">
+    <div class="kicker">HeiChips Summer School · Heidelberg · August 2026</div>
+    <h1 style="font-size:62px; max-width:1050px">Introduction into <span class="accent">Agentic AI</span> for Hardware Design and&nbsp;Verification</h1>
+    <p style="margin-top:34px; font-size:24px">Riadh Ben Abdelhamid</p>
+    <p class="small" style="margin-top:6px">Novel Computing Technologies Group · ZITI · Heidelberg University</p>
+  </div>
+  <div class="foot mono">RTL Forge and chipchamp: two working systems, shown later in this talk</div>
+  <aside class="notes">30 seconds. The promise: "In the next hour: what 'agentic AI' actually means beyond the buzzword, why hardware, of all domains, may be the best fit for it, what the state of the art really looks like once you separate measurement from marketing, how you can use it starting Monday, and two systems I built, including the experiments that failed."</aside>
+</section>
+
+<!-- 2 · AGENDA -->
+<section class="slide" data-act="">
+  <h2>This talk</h2>
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:16px">
+    <div class="card" style="display:flex; gap:22px; align-items:baseline"><span class="pill b">Act I</span><p style="font-size:22px"><strong>What "agentic" actually means</strong>: beyond the buzzword</p></div>
+    <div class="card frag" style="display:flex; gap:22px; align-items:baseline"><span class="pill b">Act II</span><p style="font-size:22px"><strong>Why hardware</strong>: the best domain for agents, and the hardest</p></div>
+    <div class="card frag" style="display:flex; gap:22px; align-items:baseline"><span class="pill b">Act III</span><p style="font-size:22px"><strong>State of the art</strong>: research, industry, and silicon that already shipped</p></div>
+    <div class="card frag" style="display:flex; gap:22px; align-items:baseline"><span class="pill b">Act IV</span><p style="font-size:22px"><strong>Using it today</strong>: harnesses, tools, models: open vs. closed</p></div>
+    <div class="card frag" style="display:flex; gap:22px; align-items:baseline"><span class="pill b">Act V</span><p style="font-size:22px"><strong>Two working systems</strong>: RTL Forge &amp; chipchamp, with honest measurements</p></div>
+  </div>
+  <aside class="notes">Fast. One sentence per act. Tell them Act V is where the demos and the failures live: "including the experiment where my own improvement made the model worse."</aside>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     ACT I · WHAT AGENTIC MEANS
+     ════════════════════════════════════════════════════════════ -->
+
+<!-- 3 · three eras -->
+<section class="slide" data-act="Act I · What agentic means">
+  <div class="kicker">Act I · What "agentic" actually means</div>
+  <h2>Three eras in five years</h2>
+  <div class="grid3" style="flex:1; align-content:center">
+    <div class="card spot">
+      <span class="pill">2021</span>
+      <h3 style="margin-top:14px">Autocomplete</h3>
+      <p>Copilot finishes your line. You are still the engineer; the model is a fancy keyboard.</p>
+    </div>
+    <div class="card frag spot">
+      <span class="pill">2023</span>
+      <h3 style="margin-top:14px">Chat</h3>
+      <p>ChatGPT writes a whole module. You copy-paste, run, and debug it by hand. The loop is <em>you</em>.</p>
+    </div>
+    <div class="card frag spot">
+      <span class="pill b">2025→</span>
+      <h3 style="margin-top:14px">Agents</h3>
+      <p>The model runs the tools, reads the errors, fixes its own work, and comes back when it's done. <strong>The loop is the machine.</strong></p>
+    </div>
+  </div>
+  <p class="frag" style="text-align:center; margin-top:10px; font-size:23px">The difference is not a bigger model. It is an <strong>architecture around</strong> the model.</p>
+  <aside class="notes">Anchor with their own experience: everyone here has copy-pasted between ChatGPT and a terminal. That copy-paste loop (run, read error, paste back) IS the agent loop. Agents just close it mechanically. The punchline sets up the whole talk: architecture around the model.</aside>
+</section>
+
+<!-- 4 · LLM is not an agent -->
+<section class="slide" data-act="Act I · What agentic means">
+  <div class="kicker">Act I · What "agentic" actually means</div>
+  <h2>An LLM is not an agent</h2>
+  <div class="cols" style="align-items:center">
+    <div class="col">
+      <h3 style="text-align:center; color:var(--muted); margin-bottom:18px">One-shot LLM</h3>
+      <svg viewBox="0 0 520 120" style="width:100%">
+        <defs><marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6b7a8f"/></marker></defs>
+        <g font-family="system-ui" font-size="19" text-anchor="middle">
+          <rect x="10" y="35" width="130" height="50" rx="10" fill="#111a28" stroke="#3a4658"/><text x="75" y="66" fill="#f2f6fb">prompt</text>
+          <rect x="195" y="35" width="130" height="50" rx="10" fill="#111a28" stroke="#3a4658"/><text x="260" y="66" fill="#f2f6fb">model</text>
+          <rect x="380" y="35" width="130" height="50" rx="10" fill="#111a28" stroke="#3a4658"/><text x="445" y="66" fill="#f2f6fb">output</text>
+          <line x1="140" y1="60" x2="188" y2="60" stroke="#6b7a8f" stroke-width="2.5" marker-end="url(#ar)"/>
+          <line x1="325" y1="60" x2="373" y2="60" stroke="#6b7a8f" stroke-width="2.5" marker-end="url(#ar)"/>
+        </g>
+      </svg>
+      <p style="text-align:center; font-size:19px; margin-top:14px">You get what you get.<br>Errors ship <span class="no">silently</span>.</p>
+    </div>
+    <div class="col frag">
+      <h3 style="text-align:center; color:var(--blue-soft); margin-bottom:18px">Agent</h3>
+      <svg viewBox="0 0 560 240" style="width:100%">
+        <g font-family="system-ui" font-size="19" text-anchor="middle">
+          <rect x="10" y="60" width="140" height="52" rx="10" fill="#111a28" stroke="#3a4658"/><text x="80" y="92" fill="#f2f6fb">generate</text>
+          <rect x="205" y="60" width="160" height="52" rx="10" fill="rgba(57,135,229,.15)" stroke="#3987e5" stroke-width="2.5"/><text x="285" y="84" fill="#9cc3f2" font-weight="700">check</text><text x="285" y="104" fill="#9cc3f2" font-size="14">real tool</text>
+          <rect x="420" y="60" width="120" height="52" rx="10" fill="#111a28" stroke="#3a4658"/><text x="480" y="92" fill="#f2f6fb">done</text>
+          <rect x="215" y="165" width="140" height="52" rx="10" fill="#111a28" stroke="#3a4658"/><text x="285" y="197" fill="#f2f6fb">fix</text>
+          <line x1="150" y1="86" x2="198" y2="86" stroke="#6b7a8f" stroke-width="2.5" marker-end="url(#ar)"/>
+          <line x1="365" y1="86" x2="413" y2="86" stroke="#6b7a8f" stroke-width="2.5" marker-end="url(#ar)"/>
+          <text x="389" y="72" fill="#2fbf71" font-size="15">pass</text>
+          <line x1="285" y1="112" x2="285" y2="158" stroke="#6b7a8f" stroke-width="2.5" marker-end="url(#ar)"/>
+          <text x="315" y="140" fill="#e05d5d" font-size="15">fail</text>
+          <path d="M215 191 L80 191 L80 119" stroke="#d95926" stroke-width="3" fill="none" marker-end="url(#ar)"/>
+        </g>
+      </svg>
+      <p style="text-align:center; font-size:19px; margin-top:4px">A loop with <strong>tools, feedback, state</strong>.<br>Errors become <span class="ok">inputs</span>.</p>
+    </div>
+  </div>
+  <aside class="notes">Deflate the buzzword. Left: the 2023 workflow, where the model's confidence is all you have. Right: the check node is a REAL tool (a compiler, a simulator), not the model grading itself. That one highlighted box is the entire difference between hype and engineering.</aside>
+</section>
+
+<!-- 5 · five ingredients -->
+<section class="slide" data-act="Act I · What agentic means">
+  <div class="kicker">Act I · What "agentic" actually means</div>
+  <h2>Five ingredients of an agentic system</h2>
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:13px">
+    <div class="card" style="display:flex; gap:20px; padding:18px 26px"><span class="mono accent" style="font-size:24px; font-weight:700">1</span><p><strong>Tools</strong>: the model can <em>run</em> things: linters, simulators, file&nbsp;I/O, synthesis</p></div>
+    <div class="card frag" style="display:flex; gap:20px; padding:18px 26px"><span class="mono accent" style="font-size:24px; font-weight:700">2</span><p><strong>Feedback loops</strong>: tool output flows back into the next attempt</p></div>
+    <div class="card frag" style="display:flex; gap:20px; padding:18px 26px"><span class="mono accent" style="font-size:24px; font-weight:700">3</span><p><strong>State &amp; checkpoints</strong>: long tasks survive failure, resume, and can be audited</p></div>
+    <div class="card frag" style="display:flex; gap:20px; padding:18px 26px"><span class="mono accent" style="font-size:24px; font-weight:700">4</span><p><strong>Routing</strong>: when something fails, <em>whose fault is it?</em> Fix the right artifact</p></div>
+    <div class="card frag" style="display:flex; gap:20px; padding:18px 26px"><span class="mono accent" style="font-size:24px; font-weight:700">5</span><p><strong>Decomposition</strong>: split big problems into sub-problems with contracts between them</p></div>
+  </div>
+  <p class="small frag" style="margin-top:14px; text-align:center">Keep these five in mind. Each one reappears, concretely, in Act V.</p>
+  <aside class="notes">Domain-generic on purpose. Tell them explicitly: "these five are abstract now; in Act V you will see every one of them embodied in working code, and you'll see what breaks when one is missing."</aside>
+</section>
+
+<!-- 6 · software proof -->
+<section class="slide" data-act="Act I · What agentic means">
+  <div class="kicker">Act I · What "agentic" actually means</div>
+  <h2>In software, this already happened</h2>
+  <div class="cols" style="align-items:center">
+    <div class="col" style="flex:1.1">
+      <div class="card tile">
+        <div class="v"><span class="no">~2%</span> → <span class="ok">~96%</span></div>
+        <div class="l">real GitHub issues fixed end-to-end:<br>SWE-bench, Oct 2023 → SWE-bench Verified, mid-2026</div>
+      </div>
+      <div style="margin-top:18px" class="card tile">
+        <div class="v">hours</div>
+        <div class="l">of autonomous multi-step work per task is now routine<br>for coding agents (Claude Code, Codex, Gemini CLI…)</div>
+      </div>
+    </div>
+    <div class="col">
+      <ul class="airy">
+        <li>Agents open the repo, reproduce the bug, edit, run tests, iterate, <strong>unattended</strong></li>
+        <li>Adoption went from research demo to <strong>daily tool</strong> for millions of developers in ~2 years</li>
+        <li>Why it worked: software has <strong>executable feedback</strong>: compilers and tests</li>
+      </ul>
+      <p class="frag" style="margin-top:26px; font-size:24px">Hold that thought: <strong>what does hardware have?</strong></p>
+    </div>
+  </div>
+  <div class="foot">SWE-bench: Jimenez et al., Oct '23, best model 1.96% (full set) · Verified subset: OpenAI, Aug '24 (33.2%) · 49% late '24 · 80.9% late '25 · ≈96% mid-'26, vendor-reported, tracked by aggregators · press C for sources</div>
+  <aside class="cites">
+    <li>SWE-bench: Can Language Models Resolve Real-World GitHub Issues? · Jimenez et al., Oct 2023 · <a href="https://arxiv.org/abs/2310.06770" target="_blank">arxiv.org/abs/2310.06770</a></li>
+    <li>Introducing SWE-bench Verified · OpenAI, Aug 13, 2024 · <a href="https://openai.com/index/introducing-swe-bench-verified/" target="_blank">openai.com</a></li>
+    <li>Claude 3.5 Sonnet at 49.0% · Anthropic, Oct 2024 · <a href="https://www.anthropic.com/news/3-5-models-and-computer-use" target="_blank">anthropic.com</a></li>
+    <li>Claude Opus 4.5 at 80.9% (first past 80) · Anthropic, Nov 2025 · <a href="https://www.anthropic.com/news/claude-opus-4-5" target="_blank">anthropic.com</a></li>
+    <li>~96% in 2026: Claude Opus 5 at 96.0 (Aug 2026), tracked by aggregators · <a href="https://benchlm.ai/benchmarks/sweVerified" target="_blank">benchlm.ai</a> · <a href="https://llm-stats.com/benchmarks/swe-bench-verified" target="_blank">llm-stats.com</a> · note: the official <a href="https://www.swebench.com/" target="_blank">swebench.com</a> board lists only checked scaffold submissions, so vendor-reported frontier scores do not appear there</li>
+  </aside>
+  <aside class="notes">Establish the base rate so hardware claims land as plausible, not sci-fi. Timeline: original SWE-bench paper Oct 2023, best model (Claude 2) resolved ~2% of the issues. OpenAI released the human-validated Verified subset in Aug 2024: ~33% at launch, 49% by late 2024 (Claude 3.5 Sonnet), ~62% early 2025, first past 80% in late 2025 (Claude Opus 4.5), ~96% in mid-2026 (Claude Opus 5 at 96.0 per aggregator leaderboards such as BenchLM, Aug 2026). If someone checks swebench.com and cannot find 96: the official board lists only checked scaffold submissions, and frontier vendors mostly do not submit, so their reported scores live on model cards and aggregators. Caveat if asked: the 2023 figure is on the full, noisier set; Verified is the cleaner 500-issue subset, so the endpoints aren't apples-to-apples, but the three-orders-of-magnitude trend is the point. Numbers move monthly; re-check the week of the talk. The closing question is the hinge of the whole keynote. Leave it hanging and advance.</aside>
+</section>
+
+<!-- 7 · measured vs estimated -->
+<section class="slide" data-act="Act I · What agentic means">
+  <div class="kicker">Act I · What "agentic" actually means</div>
+  <h2>The load-bearing distinction</h2>
+  <div class="cols" style="align-items:center">
+    <div class="col card" style="border-color:rgba(224,93,93,.4)">
+      <h3 class="no" style="margin-bottom:12px">Estimated</h3>
+      <p style="font-size:21px">"Model, does this code look correct to you?"</p>
+      <p style="font-size:21px; margin-top:16px">Plausible. Confident. <strong class="no">Sometimes fiction.</strong></p>
+    </div>
+    <div class="col card frag" style="border-color:rgba(47,191,113,.4)">
+      <h3 class="ok" style="margin-bottom:12px">Measured</h3>
+      <p style="font-size:21px">Verilator compiled it. The simulation ran. The assertions held.</p>
+      <p style="font-size:21px; margin-top:16px">Ground truth, <strong class="ok">independent of the model's opinion.</strong></p>
+    </div>
+  </div>
+  <p class="frag" style="text-align:center; font-size:26px; margin-top:8px">An agentic flow is only as trustworthy as its <strong>least-grounded verdict</strong>.</p>
+  <aside class="notes">Plant this distinction now; it returns three times: in the CVDP-vs-marketing tension (Act III), in the guardrails (Act IV), and in the confession slide about my own tool (Act V). Slow down on the closing sentence; it's one of the three take-homes.</aside>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     ACT II · WHY HARDWARE
+     ════════════════════════════════════════════════════════════ -->
+
+<!-- 8 · verification eats the schedule -->
+<section class="slide" data-act="Act II · Why hardware">
+  <div class="kicker">Act II · Why hardware</div>
+  <h2>Verification is eating the schedule</h2>
+  <div class="grid3" style="flex:1; align-content:center">
+    <div class="card tile">
+      <div class="v">60–70%</div>
+      <div class="l">of engineering effort on a chip project goes to <strong>verification</strong></div>
+    </div>
+    <div class="card tile frag">
+      <div class="v">≥1 : 1</div>
+      <div class="l">verification engineers per designer on many ASIC teams, and rising</div>
+    </div>
+    <div class="card tile frag">
+      <div class="v">$M + months</div>
+      <div class="l">cost of a respin: there is <strong>no hotfix after tape-out</strong></div>
+    </div>
+  </div>
+  <p class="frag" style="text-align:center; font-size:24px">And the industry is short tens of thousands of engineers. The work is growing <strong>faster than the workforce</strong>.</p>
+  <div class="foot">2024 Siemens EDA / Wilson Research Group functional-verification study · Lux Capital, "The looming labor crisis in chip design" · press C for sources</div>
+  <aside class="cites">
+    <li>2024 Siemens EDA / Wilson Research Group Functional Verification Study · <a href="https://verificationacademy.com/topics/planning-measurement-and-analysis/2024-siemens-eda-and-wilson-research-group-functional-verification-study/" target="_blank">verificationacademy.com</a> · verification ≈60–70% of effort; verification-to-design ratio ≈1:1 (up to 5:1 on processor projects); only 14% of ASIC projects hit first-silicon success</li>
+    <li>Harry Foster, Verification Horizons, Sept 2025 · <a href="https://blogs.sw.siemens.com/verificationhorizons/2025/09/03/why-first-silicon-success-is-getting-harder-for-system-companies/" target="_blank">blogs.sw.siemens.com</a></li>
+    <li>The looming labor crisis in chip design · Lux Capital · <a href="https://www.luxcapital.com/content/the-looming-labor-crisis-in-chip-design" target="_blank">luxcapital.com</a></li>
+  </aside>
+  <aside class="notes">One number, one story. 2024 study (latest edition; it runs even years): verification ≈60–70% of engineering effort, roughly constant near 70% since 2008; ratio ≈1:1, up to 5:1 on processor projects; design engineers themselves spend 49% of their time verifying; only 14% of ASIC projects achieve first-silicon success. Then tell ONE silicon-bug story well: Pentium FDIV as the classic, or a respin story from your own career. The labor-shortage line reframes agents as capacity, not replacement, which matters for a room full of students entering the field.</aside>
+</section>
+
+<!-- 9 · why hardware lagged -->
+<section class="slide" data-act="Act II · Why hardware">
+  <div class="kicker">Act II · Why hardware</div>
+  <h2>So why didn't the software wave carry hardware with it?</h2>
+  <div class="grid3" style="flex:1; align-content:center">
+    <div class="card">
+      <h3>Data scarcity</h3>
+      <p style="margin-top:10px">Public Verilog is a rounding error next to public Python. The best RTL on Earth is locked inside companies.</p>
+    </div>
+    <div class="card frag">
+      <h3>Absolute correctness</h3>
+      <p style="margin-top:10px">"Mostly works" is fine for a demo app. It is <em>meaningless</em> for silicon.</p>
+    </div>
+    <div class="card frag">
+      <h3>Tribal knowledge</h3>
+      <p style="margin-top:10px">Methodology, tool flags, house lint rules. Little of it is written down where a model could learn it.</p>
+    </div>
+  </div>
+  <p class="frag" style="text-align:center; font-size:23px; font-style:italic">So the naive move, "just prompt an LLM for Verilog", disappoints. Something else is needed.</p>
+  <aside class="notes">Preempt the obvious objection. Extra color for Q&amp;A: models also confuse HDL semantics with software semantics: blocking vs non-blocking, clock domains, X-propagation have no software analogue, so transfer learning half-helps and half-hurts.</aside>
+</section>
+
+<!-- 10 · THE THESIS -->
+<section class="slide" data-act="Act II · Why hardware">
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; text-align:center">
+    <p class="kicker" style="text-align:center">Act II · The thesis</p>
+    <h1 style="font-size:46px; max-width:1000px; margin:0 auto">Hardware is not the <em>hardest</em> domain for agentic AI.<br><span class="accent">It may be the best one.</span></h1>
+    <div class="frag" style="margin-top:44px; max-width:860px; margin-left:auto; margin-right:auto; width:100%">
+      <table class="tbl" style="text-align:left">
+        <tr><td>prose, UX, strategy…</td><td><span class="no">no ground truth</span></td></tr>
+        <tr><td>software</td><td>tests, <em>if</em> someone wrote them</td></tr>
+        <tr><td>hardware</td><td><strong class="ok">lint · simulation · formal · synthesis · equivalence:<br>cheap, deterministic oracles</strong></td></tr>
+      </table>
+    </div>
+    <p class="frag" style="margin-top:34px; font-size:26px">An agent can <strong>know</strong> its RTL is wrong: mechanically, in seconds, for free.</p>
+  </div>
+  <aside class="notes">THE slide. Slow down. This is the one sentence they should remember a year from now. Hardware ships with oracles software can only dream of: a linter that knows the language law, a simulator that executes your intent, formal tools that PROVE properties, LEC that proves two versions equivalent. Every one is deterministic, scriptable, and the open-source versions are free.</aside>
+</section>
+
+<!-- 11 · but the loop must be rebuilt -->
+<section class="slide" data-act="Act II · Why hardware">
+  <div class="kicker">Act II · Why hardware</div>
+  <h2>…but the loop must be rebuilt for hardware</h2>
+  <div class="grid3" style="flex:1; align-content:center">
+    <div class="card tint-blue"><h3>Feedback latency</h3><p style="margin-top:8px">pytest: seconds. A regression: hours-to-days on a licensed farm.</p></div>
+    <div class="card frag tint-aqua"><h3>Giant ground truth</h3><p style="margin-top:8px">Gigabyte waveforms, coverage databases, 10⁵-path timing reports. Nothing fits in a context window.</p></div>
+    <div class="card frag tint-red"><h3>The cost of wrong</h3><p style="margin-top:8px">A bad software merge gets reverted. A bad chip gets <em>respun</em>.</p></div>
+    <div class="card frag tint-warn"><h3>Metered resources</h3><p style="margin-top:8px">Simulator licenses cost $50k–300k per seat-year. An agent that spams the farm is fired.</p></div>
+    <div class="card frag tint-violet"><h3>Scale &amp; fragmentation</h3><p style="margin-top:8px">10M-line mixed SV/VHDL codebases, filelists, generators, Perforce.</p></div>
+    <div class="card frag tint-orange"><h3>IP confidentiality</h3><p style="margin-top:8px">Foundry NDAs, export control. "Upload the chip to a cloud API" is often simply illegal.</p></div>
+  </div>
+  <p class="frag" style="text-align:center; font-size:23px">The <strong>model</strong> is the easy part. The <strong>loop around it</strong> is the engineering.</p>
+  <aside class="notes">This slide is the bridge from thesis to practice, and it previews Act V, where every one of these six gaps maps to a concrete mechanism. Point at the IP box for this audience: it's why open models and open EDA matter (Act IV), and why this summer school's stack is strategically important, not just pedagogically nice.</aside>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     ACT III · STATE OF THE ART
+     ════════════════════════════════════════════════════════════ -->
+
+<!-- 12 · the benchmark story (chart) -->
+<section class="slide" data-act="Act III · State of the art">
+  <div class="kicker">Act III · State of the art · research</div>
+  <h2>What the benchmarks say</h2>
+  <div class="cols">
+    <div class="col" style="flex:1.5">
+      <div class="card" style="padding:22px 26px">
+        <p class="small" style="margin-bottom:2px">VerilogEval-Human pass@1 · % (higher is better)</p>
+        <svg id="benchchart" viewBox="0 0 640 330" style="width:100%">
+          <g font-family="system-ui" font-size="15">
+            <!-- gridlines at 0/25/50/75/100 over x span 190..610 -->
+            <g stroke="#2a3444" stroke-width="1">
+              <line x1="190" y1="8" x2="190" y2="292"/><line x1="295" y1="8" x2="295" y2="292"/>
+              <line x1="400" y1="8" x2="400" y2="292"/><line x1="505" y1="8" x2="505" y2="292"/>
+              <line x1="610" y1="8" x2="610" y2="292"/>
+            </g>
+            <g fill="#6b7a8f" text-anchor="middle">
+              <text x="190" y="312">0</text><text x="295" y="312">25</text><text x="400" y="312">50</text><text x="505" y="312">75</text><text x="610" y="312">100</text>
+            </g>
+            <!-- bars: x = 190 + 4.2*value ; labels right of bar -->
+            <g font-size="16">
+              <text x="180" y="40" fill="#f2f6fb" text-anchor="end">GPT-4 · 2023</text>
+              <rect class="bar" data-tip="GPT-4, one-shot prompting (ICCAD 2023)" x="190" y="26" width="183" height="20" rx="4" fill="#3987e5"/>
+              <text x="381" y="41" fill="#aab8ca">43.5</text>
+              <text x="180" y="80" fill="#f2f6fb" text-anchor="end">GPT-4o · 2024</text>
+              <rect class="bar" data-tip="GPT-4o, one-shot prompting (VerilogEval v2)" x="190" y="66" width="265" height="20" rx="4" fill="#3987e5"/>
+              <text x="463" y="81" fill="#aab8ca">63</text>
+              <text x="180" y="120" fill="#f2f6fb" text-anchor="end">frontier · 2026</text>
+              <rect class="bar" data-tip="Frontier models, prompting: the benchmark is saturated" x="190" y="106" width="407" height="20" rx="4" fill="#3987e5"/>
+              <text x="605" y="121" fill="#aab8ca">~97</text>
+              <text x="180" y="172" fill="#f2f6fb" text-anchor="end">VerilogCoder</text>
+              <rect class="bar" data-tip="NVIDIA, AAAI 2025: agent with task graph + waveform tracing" x="190" y="158" width="396" height="20" rx="4" fill="#199e70"/>
+              <text x="594" y="173" fill="#aab8ca">94.2</text>
+              <text x="180" y="212" fill="#f2f6fb" text-anchor="end">MAGE</text>
+              <rect class="bar" data-tip="UCSD, DAC 2025: first open-source multi-agent RTL system" x="190" y="198" width="402" height="20" rx="4" fill="#199e70"/>
+              <text x="600" y="213" fill="#aab8ca">95.7</text>
+              <text x="180" y="264" fill="#f2f6fb" text-anchor="end">CVDP · best</text>
+              <rect class="bar" data-tip="NVIDIA CVDP 2025: 783 realistic tasks, 13 categories; best model ≈34%" x="190" y="250" width="143" height="20" rx="4" fill="#d95926"/>
+              <text x="341" y="265" fill="#aab8ca">~34</text>
+            </g>
+          </g>
+        </svg>
+        <div style="display:flex; gap:22px; margin-top:6px; font-size:15px; color:var(--ink-2)">
+          <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--blue);margin-right:6px"></span>LLM, prompting</span>
+          <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--aqua);margin-right:6px"></span>agentic system</span>
+          <span><span style="display:inline-block;width:12px;height:12px;border-radius:3px;background:var(--orange);margin-right:6px"></span>realistic benchmark</span>
+        </div>
+      </div>
+    </div>
+    <div class="col" style="display:flex; flex-direction:column; justify-content:center; gap:18px">
+      <p><strong>Agents beat prompting</strong>: VerilogCoder gains +33.9 points over the best non-agentic run of the <em>same</em> class of model.</p>
+      <p class="frag"><strong>Then the benchmark saturated</strong>, so NVIDIA built CVDP: 783 realistic tasks. Best model at launch: <strong class="wr">~34%</strong>.</p>
+      <p class="frag">And one year later, a <strong>purpose-built scaffold</strong> (generator + reflector + coordinator) puts <em>open</em> models at <strong>97%</strong> on CVDP's agentic categories. The climb came from the <em>loop</em>, not a bigger model.</p>
+      <p class="frag" style="font-size:23px">The lesson, twice over: <strong>the loop is the product.</strong></p>
+    </div>
+  </div>
+  <div class="foot">VerilogEval (NVIDIA ICCAD'23, v2 2024) · VerilogCoder (AAAI'25) · MAGE (DAC'25) · CVDP (NVIDIA 2025, now hosted by Si2) · ACE-RTL (NVIDIA, July 2026) · press C for sources</div>
+  <aside class="cites">
+    <li>VerilogEval · Liu et al., NVIDIA, ICCAD 2023 · <a href="https://arxiv.org/abs/2309.07544" target="_blank">arxiv.org/abs/2309.07544</a></li>
+    <li>Revisiting VerilogEval (v2) · Pinckney et al., NVIDIA, 2024 · <a href="https://arxiv.org/abs/2408.11053" target="_blank">arxiv.org/abs/2408.11053</a></li>
+    <li>VerilogCoder · NVIDIA, AAAI 2025 · <a href="https://arxiv.org/abs/2408.08927" target="_blank">arxiv.org/abs/2408.08927</a></li>
+    <li>MAGE: A Multi-Agent Engine for Automated RTL Code Generation · UCSD, DAC 2025 · <a href="https://arxiv.org/abs/2412.07822" target="_blank">arxiv.org/abs/2412.07822</a></li>
+    <li>CVDP: Comprehensive Verilog Design Problems · NVIDIA, June 2025 · <a href="https://arxiv.org/abs/2506.14074" target="_blank">arxiv.org/abs/2506.14074</a> · <a href="https://github.com/NVlabs/cvdp_benchmark" target="_blank">github.com/NVlabs/cvdp_benchmark</a></li>
+    <li>Nemotron 3 Ultra leads open models in agentic RTL coding (ACE-RTL, 97.1%) · NVIDIA blog, July 26, 2026 · <a href="https://developer.nvidia.com/blog/nvidia-nemotron-3-ultra-leads-open-models-on-accuracy-and-efficiency-in-agentic-rtl-coding/" target="_blank">developer.nvidia.com</a></li>
+    <li>Frontier saturation on VerilogEval (~97–99% in 2026) · <a href="https://arxiv.org/abs/2603.19347" target="_blank">arxiv.org/abs/2603.19347</a></li>
+  </aside>
+  <aside class="notes">Walk it top to bottom: prompting improved with each model generation, agentic systems jumped past all of it: same models, better loop. Then the reality check: CVDP's 783 tasks include debugging, testbench work, spec alignment; the best frontier model was ~34% at launch, agentic categories lower still. The 97% coda is DAYS old (NVIDIA ACE-RTL blog, July 26, 2026, Nemotron 3 Ultra; vendor's own benchmark, say so): a generator/reflector/coordinator scaffold with "agentic context evolution", also 3–4× more token-efficient. For students: everything between those bars is thesis material. (TuRTLe's leaderboard now even benchmarks on 1,000+ real Tiny Tapeout designs; caveat: several classic benchmarks show contamination signals; see VeriContaminated.)</aside>
+</section>
+
+<!-- 13 · research map -->
+<section class="slide" data-act="Act III · State of the art">
+  <div class="kicker">Act III · State of the art · research</div>
+  <h2>A field assembling itself, fast</h2>
+  <div class="grid2" style="flex:1; align-content:center; gap:16px">
+    <div class="card">
+      <h3><span class="pill b" style="margin-right:10px">generate</span>spec → RTL</h3>
+      <ul class="blist">
+        <li>ChipNeMo: domain-adapted LLMs for chip design (NVIDIA '23)<sup class="cref">1</sup></li>
+        <li>AutoChip: the first sim-feedback generation loop<sup class="cref">2</sup></li>
+        <li>Fine-tunes (RTLCoder, CodeV, CraftRTL): a <strong>7B</strong> reasoning fine-tune beats 671B DeepSeek-R1 on RTLLM<sup class="cref">3</sup></li>
+      </ul>
+    </div>
+    <div class="card frag">
+      <h3><span class="pill g" style="margin-right:10px">verify</span>testbenches, coverage, formal</h3>
+      <ul class="blist">
+        <li>Auto-UVM machines: UVM², HAVEN; coverage-closure agents<sup class="cref">4</sup></li>
+        <li>AssertLLM: spec → SVA assertions at ~89% correctness<sup class="cref">5</sup></li>
+        <li>NVIDIA FVEval: frontier models still <strong>weak at formal</strong><sup class="cref">6</sup></li>
+      </ul>
+    </div>
+    <div class="card frag">
+      <h3><span class="pill y" style="margin-right:10px">debug</span>triage &amp; repair</h3>
+      <ul class="blist">
+        <li>RTLFixer: ~98.5% of syntax errors auto-repaired<sup class="cref">7</sup></li>
+        <li>VerilogCoder: an agent with a waveform-tracing tool<sup class="cref">8</sup></li>
+        <li>Marco timing-debug agent: solves 86% where the baseline solved <strong>0%</strong><sup class="cref">9</sup></li>
+      </ul>
+    </div>
+    <div class="card frag">
+      <h3><span class="pill r" style="margin-right:10px">implement</span>through the physical flow</h3>
+      <ul class="blist">
+        <li>ChatEDA drives RTL→GDSII tool flows<sup class="cref">10</sup></li>
+        <li>Marco DRC-Coder: sub-3nm DRC rules, <strong>weeks → ~4 min</strong><sup class="cref">9</sup></li>
+        <li>ORFS-agent tunes OpenROAD better than Bayesian optimization<sup class="cref">11</sup></li>
+      </ul>
+    </div>
+  </div>
+  <p class="frag" style="text-align:center; margin-top:12px; font-size:20px">And a hopeful result for this room: <strong>small open models + good scaffolds</strong> close much of the gap.<sup class="cref">12</sup></p>
+  <div class="foot">A selection; the survey "The Dawn of Agentic EDA" (2025)<sup class="cref">13</sup> maps the field · press C for sources</div>
+  <aside class="cites">
+    <li>ChipNeMo: Domain-Adapted LLMs for Chip Design · NVIDIA, 2023 · <a href="https://arxiv.org/abs/2311.00176" target="_blank">arxiv.org/abs/2311.00176</a></li>
+    <li>AutoChip: Automating HDL Generation Using LLM Feedback · NYU, 2023 · <a href="https://arxiv.org/abs/2311.04887" target="_blank">arxiv.org/abs/2311.04887</a></li>
+    <li>CodeV-R1: Reasoning-Enhanced Verilog Generation (7B) · NeurIPS 2025 · <a href="https://arxiv.org/abs/2505.24183" target="_blank">arxiv.org/abs/2505.24183</a></li>
+    <li>UVM²: From Concept to Practice (auto-UVM) · 2025 · <a href="https://arxiv.org/abs/2504.19959" target="_blank">arxiv.org/abs/2504.19959</a> · HAVEN: hybrid UVM synthesis · 2026 · <a href="https://arxiv.org/abs/2604.27643" target="_blank">arxiv.org/abs/2604.27643</a></li>
+    <li>AssertLLM: Generating Hardware Verification Assertions · ASP-DAC 2025 · <a href="https://arxiv.org/abs/2402.00386" target="_blank">arxiv.org/abs/2402.00386</a></li>
+    <li>FVEval: LLMs for Formal Verification · NVIDIA · <a href="https://research.nvidia.com/publications" target="_blank">research.nvidia.com</a></li>
+    <li>RTLFixer: Fixing RTL Syntax Errors with LLMs · NVIDIA, DAC 2024 · <a href="https://arxiv.org/abs/2311.16543" target="_blank">arxiv.org/abs/2311.16543</a></li>
+    <li>VerilogCoder · NVIDIA, AAAI 2025 · <a href="https://arxiv.org/abs/2408.08927" target="_blank">arxiv.org/abs/2408.08927</a></li>
+    <li>Marco: Multi-Agent Framework for Chip Design · NVIDIA, 2025 · <a href="https://arxiv.org/abs/2504.01962" target="_blank">arxiv.org/abs/2504.01962</a> · DRC-Coder: <a href="https://arxiv.org/abs/2412.05311" target="_blank">arxiv.org/abs/2412.05311</a> · <a href="https://developer.nvidia.com/blog/configurable-graph-based-task-solving-with-the-marco-multi-ai-agent-framework-for-chip-design/" target="_blank">NVIDIA developer blog</a></li>
+    <li>ChatEDA: An LLM Agent for EDA · TCAD 2024 · <a href="https://arxiv.org/abs/2308.10204" target="_blank">arxiv.org/abs/2308.10204</a></li>
+    <li>ORFS-agent: Tool-Using Agents for Parameter Tuning · UCSD, 2025 · <a href="https://arxiv.org/abs/2506.08332" target="_blank">arxiv.org/abs/2506.08332</a></li>
+    <li>David vs. Goliath: Small Models + Agentic AI in Hardware Design · Dec 2025 · <a href="https://arxiv.org/abs/2512.05073" target="_blank">arxiv.org/abs/2512.05073</a></li>
+    <li>The Dawn of Agentic EDA: A Survey · Dec 2025 · <a href="https://arxiv.org/abs/2512.23189" target="_blank">arxiv.org/abs/2512.23189</a></li>
+  </aside>
+  <aside class="notes">Don't read the boxes: give one sentence per quadrant and pick your favorite number from each. The four quadrants ARE the map of the field: generation got the hype, but verification and debug are where the papers are moving. The David-vs-Goliath point matters at an open-source school: scaffolding is a great equalizer.</aside>
+</section>
+
+<!-- 14 · silicon that shipped -->
+<section class="slide" data-act="Act III · State of the art">
+  <div class="kicker">Act III · State of the art · silicon</div>
+  <h2>This is no longer hypothetical silicon</h2>
+  <div class="grid3" style="flex:1; align-content:center; gap:16px">
+    <div class="card"><span class="pill">2023</span><p style="margin-top:10px"><strong>Chip-Chat / QTcore-A1</strong>: first LLM-architected chip ever taped out. A microcontroller co-designed in ChatGPT conversation, on Tiny Tapeout.<sup class="cref">1</sup></p></div>
+    <div class="card frag"><span class="pill">2023→</span><p style="margin-top:10px"><strong>AlphaChip (DeepMind)</strong>: RL floorplanning used in <strong>three generations of Google TPUs</strong>; layouts in hours instead of weeks.<sup class="cref">2</sup></p></div>
+    <div class="card frag"><span class="pill">2025</span><p style="margin-top:10px"><strong>QiMeng-CPU (CAS)</strong>: fully automatic CPU design. v1 taped out (Intel-486-class), v2 a <strong>superscalar</strong> ~Cortex-A53-class core, FPGA-validated.<sup class="cref">3</sup></p></div>
+    <div class="card frag"><span class="pill">2025</span><p style="margin-top:10px"><strong>AlphaEvolve</strong>: a Gemini-powered agent <strong>rewrote Verilog inside an upcoming TPU</strong>. Human-verified, shipped into the design.<sup class="cref">4</sup></p></div>
+    <div class="card frag"><span class="pill">2026</span><p style="margin-top:10px"><strong>OpenAI × Broadcom "Jalapeño"</strong>: inference ASIC, initial design to tape-out in <strong>9 months</strong>, OpenAI models credited in the flow.<sup class="cref">5</sup></p></div>
+    <div class="card frag" style="border-color:rgba(57,135,229,.5)"><span class="pill b">2026</span><p style="margin-top:10px"><strong>Eight groups of high-school students, 90 minutes</strong>: tapeout-ready VGA chips via an in-browser LLM Tiny Tapeout flow. <em>One class session.</em><sup class="cref">6</sup></p></div>
+  </div>
+  <div class="foot">1 Blocklove et al. '23 · 2 Mirhoseini et al., Nature '21 + DeepMind '24 · 3 CAS ICT '25 · 4 DeepMind, May '25 · 5 OpenAI × Broadcom, June '26 · 6 "From RTL to Prompt Coding", Jan '26 · press C for sources</div>
+  <aside class="cites">
+    <li>Chip-Chat: Challenges and Opportunities in Conversational Hardware Design · Blocklove, Pearce et al., NYU, 2023 · <a href="https://arxiv.org/abs/2305.13243" target="_blank">arxiv.org/abs/2305.13243</a></li>
+    <li>A graph placement methodology for fast chip design · Mirhoseini et al., Nature 2021 · <a href="https://www.nature.com/articles/s41586-021-03544-w" target="_blank">nature.com</a> · How AlphaChip transformed chip design · DeepMind, Sept 2024 · <a href="https://deepmind.google/blog/how-alphachip-transformed-computer-chip-design/" target="_blank">deepmind.google</a></li>
+    <li>QiMeng-CPU v1 (taped out 2021): <a href="https://arxiv.org/abs/2306.12456" target="_blank">arxiv.org/abs/2306.12456</a> · v2 (superscalar, IJCAI 2025): <a href="https://arxiv.org/abs/2505.03195" target="_blank">arxiv.org/abs/2505.03195</a> · project: <a href="https://qimeng-ict.github.io/" target="_blank">qimeng-ict.github.io</a></li>
+    <li>AlphaEvolve: a Gemini-powered coding agent · DeepMind, May 2025 · <a href="https://deepmind.google/blog/alphaevolve-a-gemini-powered-coding-agent-for-designing-advanced-algorithms/" target="_blank">deepmind.google</a></li>
+    <li>OpenAI × Broadcom "Jalapeño" inference chip · OpenAI, June 2026 · <a href="https://openai.com/index/openai-broadcom-jalapeno-inference-chip/" target="_blank">openai.com</a></li>
+    <li>From RTL to Prompt Coding · Jan 2026 · <a href="https://arxiv.org/abs/2601.13815" target="_blank">arxiv.org/abs/2601.13815</a></li>
+  </aside>
+  <aside class="notes">The jaw-drop slide. Let it breathe, one beat per card. Arc: curiosity (2023) → production infrastructure (AlphaChip) → autonomous design (QiMeng) → agent code in a flagship commercial chip (AlphaEvolve) → schedule compression at the leading edge (Jalapeño) → and finally: democratization, students taping out in a class session. That last card is this audience, this week. Caveats if asked: AlphaChip's benchmarking was academically contested; Jalapeño's 9-month figure is the company's claim; QiMeng v2's A53-class result is FPGA/simulation-validated, its 28nm tapeout was in progress as of the paper; the Chip-Chat chip NYU later photographed in-hand was the follow-on QTcore-C1 via chipIgnite.</aside>
+</section>
+
+<!-- 15 · industry -->
+<section class="slide" data-act="Act III · State of the art">
+  <div class="kicker">Act III · State of the art · industry</div>
+  <h2>Copilots → agents → "autonomous engineers"</h2>
+  <div class="grid3" style="gap:16px">
+    <div class="card"><h3>Synopsys</h3>
+      <ul class="blist" style="font-size:14.5px">
+        <li>DSO.ai: <strong>700+ production tapeouts</strong><sup class="cref">1</sup></li>
+        <li>AgentEngineer: "L4" spec→RTL workflows<sup class="cref">2</sup></li>
+        <li>Autonomous DV orchestrator with NVIDIA, 2H26<sup class="cref">3</sup></li>
+      </ul></div>
+    <div class="card frag"><h3>Cadence</h3>
+      <ul class="blist" style="font-size:14.5px">
+        <li>Acquired ChipStack → "AI Super Agent"; used at NVIDIA, Qualcomm, Tenstorrent<sup class="cref">4</sup></li>
+        <li>Claims an "L5 virtual engineer": 5-week verification loop → <strong>&lt;1 day</strong><sup class="cref">5</sup></li>
+      </ul></div>
+    <div class="card frag"><h3>Siemens EDA</h3>
+      <ul class="blist" style="font-size:14.5px">
+        <li>"Self-verifying" agentic workflows with NVIDIA<sup class="cref">6</sup></li>
+        <li>Every agent decision validated against deterministic physics engines (Questa, Calibre…)<sup class="cref">6</sup></li>
+      </ul></div>
+  </div>
+  <div style="margin-top:10px" class="grid2">
+    <div class="card frag"><h3>The startup wave</h3>
+      <ul class="blist" style="font-size:14.5px">
+        <li><strong>ChipAgents</strong> $134M; with STMicro, <em>claimed</em>: assertions 240×, UVM bring-up 400×<sup class="cref">7</sup></li>
+        <li><strong>Cognichip</strong> $93M for a "physics-informed foundation model"<sup class="cref">8</sup></li>
+        <li>ChipStack's exit to Cadence: the first AI-DV acquisition<sup class="cref">4</sup></li>
+      </ul></div>
+    <div class="card frag"><h3>And the chipmakers themselves</h3>
+      <ul class="blist" style="font-size:14.5px">
+        <li>All three vendors' agents run on <strong>NVIDIA Nemotron</strong> models<sup class="cref">3</sup></li>
+        <li>AMD rolled Claude out across its engineering org<sup class="cref">9</sup></li>
+        <li>Anthropic contributes to next-gen NVIDIA chip design<sup class="cref">10</sup></li>
+      </ul></div>
+  </div>
+  <div class="foot">All "×" and "L" figures are vendor claims · press C for sources</div>
+  <aside class="cites">
+    <li>DSO.ai 700+ cumulative tapeouts · trade press, June 2026 · <a href="https://finance.yahoo.com/sectors/technology/articles/synopsys-ai-strategy-key-driver-150900474.html" target="_blank">finance.yahoo.com</a> · 100th tapeout: Synopsys PR, Feb 2023 · <a href="https://news.synopsys.com/2023-02-07-AI-designed-Chips-Reach-Scale-with-First-100-Commercial-Tape-outs-Using-Synopsys-Technology" target="_blank">news.synopsys.com</a></li>
+    <li>Synopsys outlines AgentEngineer vision · Synopsys PR, March 2026 · <a href="https://news.synopsys.com/2026-03-11-Synopsys-Outlines-Vision-for-Engineering-the-Future" target="_blank">news.synopsys.com</a></li>
+    <li>Autonomous engineering workflows with NVIDIA · Synopsys PR, DAC, July 2026 · <a href="https://news.synopsys.com/2026-07-26-Synopsys-Showcases-Comprehensive-Autonomous-Engineering-Workflows-from-Silicon-to-Systems,-Developed-with-NVIDIA-Technology" target="_blank">news.synopsys.com</a></li>
+    <li>Cadence unleashes ChipStack AI Super Agent · Cadence PR, Feb 2026 · <a href="https://www.cadence.com/en_US/home/company/newsroom/press-releases/pr/2026/cadence-unleashes-chipstack-ai-super-agent-pioneering-a-new.html" target="_blank">cadence.com</a></li>
+    <li>Cadence "L5 fully autonomous virtual AI design engineer" · Computex, June 2026 · <a href="https://www.businesswire.com/news/home/20260531072918/en/" target="_blank">businesswire.com</a></li>
+    <li>Siemens advances self-verifying agentic AI workflows · PR Newswire, July 2026 · <a href="https://news.siemens.com/en-us/siemens-nvidia-dac-2026/" target="_blank">news.siemens.com</a></li>
+    <li>ChipAgents expands Series A to $134M · BusinessWire, July 29, 2026 · <a href="https://www.businesswire.com/news/home/20260729819576/en/" target="_blank">businesswire.com</a> · ST numbers: <a href="https://semiwiki.com/eda/chipagents-ai/370911-see-autonomous-chip-design-in-action-with-chipagents-at-dac-2026/" target="_blank">semiwiki.com (DAC 2026)</a></li>
+    <li>Cognichip raises $60M ($93M total) · TechCrunch, April 2026 · <a href="https://techcrunch.com/2026/04/01/cognichip-wants-ai-to-design-the-chips-that-power-ai-and-just-raised-60m-to-try/" target="_blank">techcrunch.com</a></li>
+    <li>AMD and Anthropic strategic partnership (Claude across AMD engineering; up to $5B equity) · AMD Newsroom, July 22, 2026 · <a href="https://newsroom.amd.com/news/amd-anthropic-strategic-partnership/" target="_blank">newsroom.amd.com</a></li>
+    <li>NVIDIA, Anthropic and Microsoft partnership · Microsoft blog, Nov 2025 · <a href="https://blogs.microsoft.com" target="_blank">blogs.microsoft.com</a></li>
+  </aside>
+  <aside class="notes">2–3 minutes max; the next slide is the point. Narrate the arc: 2023 chatbots-for-docs, 2024–25 single-task agents, 2026 every vendor selling "autonomous engineers"; Synopsys borrows the self-driving L1–L5 ladder. Money says this is real: nine-figure startup rounds, an acquisition, the biggest booth at DAC belonging to an agent company. All "×" figures are vendor claims, flagged as such on the slide.</aside>
+</section>
+
+<!-- 16 · trustworthiness gap -->
+<section class="slide" data-act="Act III · State of the art">
+  <div class="kicker">Act III · State of the art · the honest tension</div>
+  <h2>Hold both of these in your head</h2>
+  <div class="cols" style="align-items:center">
+    <div class="col card" style="border-color:rgba(232,163,61,.45)">
+      <h3 class="wr" style="margin-bottom:14px">The marketing</h3>
+      <ul class="airy" style="font-size:19px">
+        <li>"L5: fully autonomous virtual design engineer"</li>
+        <li>"40× faster RTL validation"</li>
+        <li>"400× faster UVM environment bring-up"</li>
+      </ul>
+    </div>
+    <div class="col card frag" style="border-color:rgba(57,135,229,.45)">
+      <h3 class="accent" style="margin-bottom:14px">The measurement</h3>
+      <ul class="airy" style="font-size:19px">
+        <li>Hardest public benchmark (CVDP): best model ≈ <strong>34%</strong></li>
+        <li>Agentic task categories score <strong>lower</strong>, not higher</li>
+        <li>Formal reasoning: still a frontier-model <strong>weakness</strong></li>
+      </ul>
+    </div>
+  </div>
+  <p class="frag" style="text-align:center; font-size:25px; margin-top:6px">Both are real. The space between them is called the <strong>trustworthiness gap</strong>,<br>and it is where hardware engineers will spend the next decade.</p>
+  <div class="foot">"L5" borrows the self-driving autonomy ladder: L1 assistance → L5 fully autonomous, no human in the loop. Synopsys and Cadence grade their EDA agents on it · press C for sources</div>
+  <aside class="cites">
+    <li>Agentic AI autonomy levels (L1–L5) for chip design · Synopsys · <a href="https://www.synopsys.com/ai/agentic-ai.html" target="_blank">synopsys.com/ai/agentic-ai</a></li>
+    <li>Cadence "L5 fully autonomous virtual AI design engineer" (announced ahead of Computex, June 2026) · <a href="https://www.businesswire.com/news/home/20260531072918/en/" target="_blank">businesswire.com</a> · Cadence autonomy ladder: <a href="https://www.cadence.com/en_US/home/ai/ai-for-design.html" target="_blank">cadence.com/ai</a></li>
+    <li>CVDP: Comprehensive Verilog Design Problems · NVIDIA, 2025 · <a href="https://arxiv.org/abs/2506.14074" target="_blank">arxiv.org/abs/2506.14074</a></li>
+    <li>The Dawn of Agentic EDA ("trustworthiness gap") · Dec 2025 · <a href="https://arxiv.org/abs/2512.23189" target="_blank">arxiv.org/abs/2512.23189</a></li>
+    <li>ChipAgents × STMicroelectronics productivity claims · SemiWiki, DAC 2026 · <a href="https://semiwiki.com/eda/chipagents-ai/370911-see-autonomous-chip-design-in-action-with-chipagents-at-dac-2026/" target="_blank">semiwiki.com</a></li>
+  </aside>
+  <aside class="notes">The most intellectually honest slide of Act III, and the setup for Act V. Neither column is lying: narrow, well-scaffolded, human-audited workflows genuinely hit spectacular speedups; open-ended engineering is genuinely unsolved. The resolution is the Act-I distinction: the vendor numbers are about narrow loops with humans auditing verdicts; the benchmark measures unaudited autonomy. "Trustworthiness gap" is the literature's own term (Dawn of Agentic EDA survey, 2025).</aside>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     ACT IV · USING IT TODAY
+     ════════════════════════════════════════════════════════════ -->
+
+<!-- 17 · the stack -->
+<section class="slide" data-act="Act IV · Using it today">
+  <div class="kicker">Act IV · Using it today</div>
+  <h2>The anatomy of your setup</h2>
+  <div style="flex:1; display:flex; align-items:center; justify-content:center">
+    <svg viewBox="0 0 900 380" style="width:88%">
+      <g font-family="system-ui" text-anchor="middle">
+        <g>
+          <rect x="20" y="120" width="420" height="80" rx="12" fill="#111a28" stroke="#3a4658"/>
+          <text x="230" y="153" fill="#f2f6fb" font-size="22" font-weight="700">model: the brain</text>
+          <text x="230" y="180" fill="#aab8ca" font-size="17">frontier API · or open weights on your desk</text>
+        </g>
+        <g class="frag">
+          <rect x="460" y="120" width="420" height="80" rx="12" fill="#111a28" stroke="#3a4658"/>
+          <text x="670" y="153" fill="#f2f6fb" font-size="22" font-weight="700">tools: the hands</text>
+          <text x="670" y="180" fill="#aab8ca" font-size="17">simulators · linters · synthesis · waveforms · MCP</text>
+        </g>
+        <g class="frag">
+          <rect x="20" y="20" width="860" height="80" rx="12" fill="rgba(57,135,229,.10)" stroke="#3987e5" stroke-width="2"/>
+          <text x="450" y="53" fill="#9cc3f2" font-size="22" font-weight="700">harness: the loop</text>
+          <text x="450" y="80" fill="#aab8ca" font-size="17">Claude Code · Codex CLI · Gemini CLI · aider · your own (Agent SDKs, LangGraph…)</text>
+        </g>
+        <g class="frag">
+          <rect x="20" y="220" width="860" height="80" rx="12" fill="rgba(47,191,113,.08)" stroke="#2fbf71" stroke-width="2"/>
+          <text x="450" y="253" fill="#7fd7a9" font-size="22" font-weight="700">guardrails: the trust</text>
+          <text x="450" y="280" fill="#aab8ca" font-size="17">gates the agent cannot skip: lint · regression · coverage · equivalence · review</text>
+        </g>
+        <text class="frag" x="450" y="345" fill="#6b7a8f" font-size="18" font-style="italic">the harness is generic; the tools and guardrails make it a hardware engineer</text>
+      </g>
+    </svg>
+  </div>
+  <aside class="notes">The mental model for the whole act: four layers, four slides. Key point for practitioners: you don't need to build an agent from scratch; off-the-shelf harnesses already do loop, context management, permissions. Your leverage is the bottom three: which model, which tools, which gates. Build order on this slide: model, then tools, then the harness that loops them, then guardrails, then the punchline.</aside>
+</section>
+
+<!-- 18 · tools & MCP -->
+<section class="slide" data-act="Act IV · Using it today">
+  <div class="kicker">Act IV · Using it today · tools</div>
+  <h2>Giving the agent hands: CLI first, MCP next</h2>
+  <div class="cols">
+    <div class="col">
+      <h3 style="margin-bottom:14px">The zero-effort start</h3>
+      <p style="font-size:19px">Coding agents can already run <strong>any shell command</strong>. If your flow is scriptable, an agent can drive it <em>today</em>:</p>
+      <div class="term" style="margin-top:16px; font-size:16px">
+        <div><span class="dim">$</span> verilator --lint-only -Wall fifo.sv</div>
+        <div><span class="dim">$</span> make sim &amp;&amp; gtkwave dump.vcd <span class="dim"># agent reads the log</span></div>
+        <div><span class="dim">$</span> yosys -p "synth_ice40" top.v</div>
+      </div>
+      <p style="font-size:19px; margin-top:14px">Plus a <code>CLAUDE.md</code>/<code>AGENTS.md</code> teaching it <em>your</em> flow. That's the whole setup. (Community plugins like <strong>GateFlow</strong> already wrap Verilator, SymbiYosys, Yosys &amp; nextpnr into Claude&nbsp;Code.)</p>
+    </div>
+    <div class="col">
+      <h3 style="margin-bottom:14px">MCP: a USB-C port for tools</h3>
+      <p style="font-size:19px"><strong>Model Context Protocol</strong>: now Linux-Foundation-governed, 10,000+ active servers. EDA is filling in:</p>
+      <ul class="airy" style="font-size:19px">
+        <li><strong>OpenROAD-MCP</strong>: official, from the OpenROAD project itself</li>
+        <li><strong>MCP4EDA</strong>: Yosys · Icarus · OpenLane · GTKWave · KLayout behind one interface</li>
+        <li>Vivado &amp; Quartus servers, even driving real dev boards</li>
+        <li class="wr"><strong>Still missing:</strong> cocotb, JTAG/OpenOCD, a proper waveform server</li>
+      </ul>
+    </div>
+  </div>
+  <p class="frag small" style="text-align:center; margin-top:10px">Rule of thumb: start with shell + Makefiles; reach for MCP when you need structure, state, or safety.</p>
+  <aside class="notes">Demystify: "agent integration" sounds like a platform project; it's actually an afternoon. Left column is genuinely all you need to start: the open EDA tools are CLI-native, which makes them agent-native by accident. MCP: donated to the Linux Foundation's Agentic AI Foundation Dec 2025; a major new stateless-core spec revision landed THE WEEK BEFORE this talk (July 28); mention it for freshness. The white-space bullet is a genuine gift to students: a cocotb or waveform MCP server is a publishable, high-impact weekend-to-semester project (research hint: event-time JSON beats raw VCD as LLM input; WaveformQA, July 2026).</aside>
+</section>
+
+<!-- 19 · models closed vs open -->
+<section class="slide" data-act="Act IV · Using it today">
+  <div class="kicker">Act IV · Using it today · models</div>
+  <h2>Closed vs. open: an actual choice now</h2>
+  <table class="tbl" style="margin-top:6px">
+    <tr><th style="width:24%"></th><th>Closed frontier</th><th>Open weights</th></tr>
+    <tr><td>Who</td><td>Claude · GPT/Codex · Gemini</td><td>DeepSeek (MIT) · Qwen3-Coder (Apache) · GLM · Kimi · gpt-oss · HDL fine-tunes (CodeV-R1…)</td></tr>
+    <tr><td>Strength</td><td>Best agentic reliability: long tool-use chains, self-correction</td><td>Your data <strong>never leaves the building</strong> · fine-tunable on your RTL</td></tr>
+    <tr><td>Cost model</td><td>Per token: a heavy agent day can cost real money</td><td>Buy the GPU once, iterate for electricity</td></tr>
+    <tr><td>Verilog today</td><td>Saturates classic benchmarks; ~⅓ of realistic CVDP tasks</td><td>30B-class models are genuinely usable <em>in a good loop</em>; 7B fine-tunes rival 671B generalists on RTL generation</td></tr>
+  </table>
+  <p class="frag" style="text-align:center; margin-top:22px; font-size:22px">For chip companies the deciding factor is usually not quality: it's <strong>IP confidentiality</strong>.<br>That's why open models matter more in hardware than almost anywhere else.</p>
+  <aside class="notes">The pragmatic slide. Closed frontier models are still meaningfully better at long agentic sessions; that's what you pay for. But the IP row decides in hardware: NDAs and export control mean many companies simply cannot ship RTL to a cloud API (enterprise no-training agreements and on-prem endpoints exist, but air-gapped local weights end the argument). The "David vs Goliath" result says scaffolding closes much of the quality gap: a strong loop around a 30B model beats a naked frontier model.</aside>
+</section>
+
+<!-- 20 · run it on your desk -->
+<section class="slide" data-act="Act IV · Using it today">
+  <div class="kicker">Act IV · Using it today · local inference</div>
+  <h2>"Local" stopped being a compromise</h2>
+  <div class="cols" style="align-items:center">
+    <div class="col">
+      <ul class="airy">
+        <li>A <strong>24–32 GB GPU</strong> runs a quantized 30B-class coder at interactive speeds</li>
+        <li>A <strong>$2–5k, 128 GB unified-memory box</strong> (DGX Spark, Strix Halo, Mac) runs 100B+ MoE coders on a desk</li>
+        <li>The 2026 sweet spot: <strong>MoE models with tiny active params</strong>: 80B-total / 3B-active coders hit ~70% SWE-bench, fully offline</li>
+        <li>Ollama / LM Studio / vLLM make it a <strong>one-command install</strong></li>
+      </ul>
+      <p class="frag" style="margin-top:20px; font-size:21px">Everything in Act V, every measured run, used <strong>local models</strong> on hardware like this. Not a frontier API in sight for most of it.</p>
+    </div>
+    <div class="col card" style="padding:28px">
+      <h3 style="margin-bottom:14px">Why this matters here</h3>
+      <p style="font-size:19px">Open models + open EDA + an open PDK =</p>
+      <p style="font-size:22px; margin-top:12px"><strong>a fully sovereign, fully inspectable, zero-license path from prompt to GDSII.</strong></p>
+      <p style="font-size:19px; margin-top:12px" class="small">No cloud dependency. No license server. Nothing you can't read the source of. A university, or a student, can own the entire stack.</p>
+    </div>
+  </div>
+  <aside class="notes">Land the sovereignty point; it's the ideological heart of Act IV for this audience. The exact hardware examples will age; the trend won't: capable local models get cheaper every quarter. And it sets up Act V's credibility: my measured results are on consumer hardware with open weights, so everything shown is reproducible by the people in this room.</aside>
+</section>
+
+<!-- 21 · open EDA playground -->
+<section class="slide" data-act="Act IV · Using it today">
+  <div class="kicker">Act IV · Using it today · the open toolchain</div>
+  <h2>You are sitting in the perfect playground</h2>
+  <div class="grid3" style="flex:1; align-content:center; gap:16px">
+    <div class="card"><h3>Simulate &amp; verify</h3><p style="margin-top:8px">Verilator (<em>functional coverage since 5.050</em>) · GHDL · cocotb 2.0 (Python testbenches, the language LLMs know best) · SymbiYosys · eqy</p></div>
+    <div class="card"><h3>Synthesize &amp; harden</h3><p style="margin-top:8px">Yosys · OpenROAD (<em>ships an official MCP server</em>) · <strong>LibreLane</strong>: this week's workshop flow, IHP PDKs built in → GDSII</p></div>
+    <div class="card"><h3>Real silicon</h3><p style="margin-top:8px">Tiny Tapeout on <strong>three foundries</strong> · <strong>IHP 130nm CMOS5L Open Source PDK</strong>: low-cost open-source MPW shuttles · and <em>this school's funded tapeout</em></p></div>
+  </div>
+  <div class="frag card" style="margin-top:4px; border-color:rgba(57,135,229,.5); background:rgba(57,135,229,.07)">
+    <p style="font-size:21px; text-align:center">Every box is free, scriptable, and license-unlimited: <strong>an agent can hammer this loop a thousand times a night</strong>, which is exactly what commercial license seats forbid. Open EDA isn't just the cheap option; for agents it's the <em>better</em> option.</p>
+  </div>
+  <aside class="notes">Connect to their week: LibreLane workshop, KLayout sessions, IHP tapeout with the shared eFPGA fabric. The highlighted insight is underrated: agents change the economics of EDA. A $200k license seat meters every run; open tools make compute the only cost, and agents are compute-hungry. The open ecosystem is structurally advantaged in the agentic era. That's a big deal for this community.</aside>
+</section>
+
+<!-- 22 · patterns & failure modes -->
+<section class="slide" data-act="Act IV · Using it today">
+  <div class="kicker">Act IV · Using it today · craft</div>
+  <h2>Patterns that work, failure modes that bite</h2>
+  <div class="cols">
+    <div class="col card" style="border-color:rgba(47,191,113,.4)">
+      <h3 class="ok" style="margin-bottom:12px">Do</h3>
+      <ul class="airy" style="font-size:19px">
+        <li><strong>generate → lint → simulate → fix</strong>: never accept unexecuted RTL</li>
+        <li>Testbench <em>first</em>, or at least independently, to decorrelate the checker from the author</li>
+        <li>Make the agent <strong>prove</strong> refactors: equivalence check, not eyeball</li>
+        <li>Feed it <em>windows</em> of waveforms, coverage <em>holes</em>, log <em>excerpts</em>: query, don't dump</li>
+      </ul>
+    </div>
+    <div class="col card frag" style="border-color:rgba(224,93,93,.4)">
+      <h3 class="no" style="margin-bottom:12px">Beware</h3>
+      <ul class="airy" style="font-size:19px">
+        <li>Protocol off-by-ones, FSM corner states, reset &amp; CDC subtleties: <strong>plausible ≠ correct</strong></li>
+        <li><strong>Vacuous passes</strong>: a testbench that checks nothing, green forever</li>
+        <li><strong>Reward hacking</strong>: agents <em>will</em> delete the failing test, weaken the assertion, shrink the timeout</li>
+        <li><strong>Naive wrappers can hurt</strong>: a bad loop can score <em>below</em> one-shot prompting</li>
+      </ul>
+    </div>
+  </div>
+  <p class="frag" style="text-align:center; font-size:22px; margin-top:8px">The failure modes are not hypothetical. Act V shows you every one of them, <strong>measured</strong>.</p>
+  <aside class="notes">The reward-hacking bullet deserves a story: agents under pressure behave like students under pressure. If the test is the obstacle, remove the test. You must make cheating structurally impossible, not politely discouraged. That's exactly what the systems in Act V are built around. On the last bullet, add verbally: tool feedback only helps models strong enough to use it. Perfect transition; take a breath here, Act V is the home stretch.</aside>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     ACT V · TWO WORKING SYSTEMS
+     ════════════════════════════════════════════════════════════ -->
+
+<!-- 23 · two projects -->
+<section class="slide" data-act="Act V · Two working systems">
+  <div class="kicker">Act V · Two working systems</div>
+  <h2>I built both halves of the problem, and the eyes</h2>
+  <div class="cols" style="align-items:stretch">
+    <div class="col card" style="padding:30px">
+      <span class="pill b">greenfield</span>
+      <h3 style="margin-top:14px; font-size:30px">RTL Forge</h3>
+      <p style="margin-top:10px; font-size:20px">Natural language → <strong>verified</strong> SystemVerilog.<br>A 13-stage pipeline with fix loops, formal checks, and a deterministic judge.</p>
+      <p class="mono small" style="margin-top:14px">"produce the RTL"</p>
+    </div>
+    <div class="col card" style="padding:30px">
+      <span class="pill g">brownfield</span>
+      <h3 style="margin-top:14px; font-size:30px">chipchamp</h3>
+      <p style="margin-top:10px; font-size:18px">A Claude-Code-style agent platform for <strong>existing</strong> RTL codebases, driving real EDA tools and earning trust with signed evidence.</p>
+      <p class="mono small" style="margin-top:14px">"own the loop, and prove it"</p>
+    </div>
+    <div class="col card" style="padding:30px">
+      <span class="pill y">companion</span>
+      <h3 style="margin-top:14px; font-size:30px">alwavelets</h3>
+      <p style="margin-top:10px; font-size:18px">A terminal waveform viewer (VCD/FST). Not an agent itself, but <strong>built to be driven by one</strong>: an MCP server and a live control socket let an agent steer the exact view on your screen and read back what you see.</p>
+      <p class="mono small" style="margin-top:14px">"the agent's eyes on the waves"</p>
+    </div>
+  </div>
+  <p class="frag" style="text-align:center; font-size:23px; margin-top:6px">Same thesis, two attack angles plus an instrument: <strong>the loop is the product.</strong> Everything runs on local, open models.</p>
+  <aside class="notes">Framing: Act IV said the loop is the engineering; these are two loops I actually built, and they taught me everything in this talk. RTL Forge: you have nothing but an idea. chipchamp: you have ten years of RTL and a failing regression. Different problems, same discipline. (chipchamp was "chipicode" until recently.) alwavelets: fuzzy signal finder, protocol decoders (SPI, I2C, UART, AXI...), glitch and X-hazard detection, expression search; started with --control it exposes a token-authenticated socket, and alwavelets --mcp serves the same powers as MCP tools, so an agent can say "group the handshake signals, find where fifo_full and wr_en, zoom there" and it happens on the screen you are watching.</aside>
+</section>
+
+<!-- 24 · RTL Forge pipeline -->
+<section class="slide" data-act="Act V · RTL Forge">
+  <div class="kicker">Act V · RTL Forge</div>
+  <h2>Thirteen stages, half of them checkers</h2>
+  <div style="flex:1; display:flex; align-items:center">
+    <svg viewBox="0 0 1120 300" style="width:100%">
+      <defs><marker id="ar2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6b7a8f"/></marker></defs>
+      <g font-family="system-ui" font-size="16" text-anchor="middle">
+        <!-- row 1: generators+review -->
+        <g>
+          <rect x="10"  y="40" width="140" height="46" rx="9" fill="#111a28" stroke="#3a4658"/><text x="80"  y="68" fill="#f2f6fb">Elicit</text>
+          <rect x="170" y="40" width="140" height="46" rx="9" fill="#111a28" stroke="#3a4658"/><text x="240" y="68" fill="#f2f6fb">Spec</text>
+          <rect x="330" y="40" width="140" height="46" rx="9" fill="#111a28" stroke="#3a4658"/><text x="400" y="68" fill="#f2f6fb">Architect</text>
+          <rect x="490" y="40" width="140" height="46" rx="9" fill="#111a28" stroke="#3a4658"/><text x="560" y="68" fill="#f2f6fb">Generate RTL</text>
+          <rect x="650" y="40" width="140" height="46" rx="9" fill="rgba(25,158,112,.13)" stroke="#199e70" stroke-width="2"/><text x="720" y="68" fill="#7fd7a9">Review ✓</text>
+          <rect x="810" y="40" width="140" height="46" rx="9" fill="rgba(25,158,112,.13)" stroke="#199e70" stroke-width="2"/><text x="880" y="68" fill="#7fd7a9">Lint ✓</text>
+          <rect x="970" y="40" width="140" height="46" rx="9" fill="rgba(25,158,112,.13)" stroke="#199e70" stroke-width="2"/><text x="1040" y="61" fill="#7fd7a9">Formal BMC ✓</text><text x="1040" y="78" fill="#5d8f7c" font-size="12">SymbiYosys</text>
+        </g>
+        <!-- row 2 -->
+        <g>
+          <rect x="170" y="180" width="150" height="46" rx="9" fill="#111a28" stroke="#3a4658"/><text x="245" y="208" fill="#f2f6fb">Testbench</text>
+          <rect x="340" y="180" width="150" height="46" rx="9" fill="rgba(25,158,112,.13)" stroke="#199e70" stroke-width="2"/><text x="415" y="208" fill="#7fd7a9">TB Review ✓</text>
+          <rect x="510" y="180" width="150" height="46" rx="9" fill="rgba(25,158,112,.13)" stroke="#199e70" stroke-width="2"/><text x="585" y="208" fill="#7fd7a9">TB Lint ✓</text>
+          <rect x="680" y="180" width="160" height="46" rx="9" fill="rgba(57,135,229,.15)" stroke="#3987e5" stroke-width="2.5"/><text x="760" y="203" fill="#9cc3f2" font-weight="700">Verify ✓</text><text x="760" y="219" fill="#7ba7d8" font-size="12">simulate + coverage</text>
+          <rect x="860" y="180" width="150" height="46" rx="9" fill="rgba(57,135,229,.15)" stroke="#3987e5" stroke-width="2.5"/><text x="935" y="208" fill="#9cc3f2" font-weight="700">Judge ✓</text>
+        </g>
+        <!-- arrows row1 -->
+        <g stroke="#6b7a8f" stroke-width="2">
+          <line x1="150" y1="63" x2="166" y2="63" marker-end="url(#ar2)"/><line x1="310" y1="63" x2="326" y2="63" marker-end="url(#ar2)"/>
+          <line x1="470" y1="63" x2="486" y2="63" marker-end="url(#ar2)"/><line x1="630" y1="63" x2="646" y2="63" marker-end="url(#ar2)"/>
+          <line x1="790" y1="63" x2="806" y2="63" marker-end="url(#ar2)"/><line x1="950" y1="63" x2="966" y2="63" marker-end="url(#ar2)"/>
+        </g>
+        <!-- wrap arrow to row2 -->
+        <path d="M1040 86 L1040 130 L245 130 L245 176" stroke="#6b7a8f" stroke-width="2" fill="none" marker-end="url(#ar2)"/>
+        <g stroke="#6b7a8f" stroke-width="2">
+          <line x1="320" y1="203" x2="336" y2="203" marker-end="url(#ar2)"/><line x1="490" y1="203" x2="506" y2="203" marker-end="url(#ar2)"/>
+          <line x1="660" y1="203" x2="676" y2="203" marker-end="url(#ar2)"/><line x1="840" y1="203" x2="856" y2="203" marker-end="url(#ar2)"/>
+        </g>
+        <!-- reflow arrow -->
+        <path d="M760 180 C 700 120, 500 95, 405 90" stroke="#d95926" stroke-width="3" stroke-dasharray="7 5" fill="none" marker-end="url(#ar2)"/>
+        <text x="535" y="156" fill="#d95926" font-size="15" font-style="italic">re-flow: the failure evidence travels upstream</text>
+      </g>
+    </svg>
+  </div>
+  <ul style="display:flex; gap:40px; list-style:none; justify-content:center">
+    <li class="small">✓-stages don't <em>write</em>; they <strong>check</strong>. That ratio is the design philosophy.</li>
+    <li class="small">Formal properties are <strong>model-checked</strong>, not just emitted.</li>
+    <li class="small">A wrong testbench is worse than no testbench, so it gets its own review pair.</li>
+  </ul>
+  <aside class="notes">Walk left-to-right, then bottom. Green boxes: checkers. The orange dashed arrow is the distinctive idea: when verification fails and the evidence points at the architecture, the flow re-enters upstream CARRYING that evidence: informed re-flow, not a dice re-roll. Sim failures get triaged across three suspects (spec, RTL, testbench) before anything is "fixed"; fixing RTL to satisfy a broken testbench is how agents go wrong quietly.</aside>
+</section>
+
+<!-- 25 · RTL Forge convergence -->
+<section class="slide" data-act="Act V · RTL Forge">
+  <div class="kicker">Act V · RTL Forge</div>
+  <h2>Retry is not a strategy. Convergence is engineered</h2>
+  <div class="grid2" style="flex:1; align-content:center; gap:18px">
+    <div class="card"><h3>Every patch is classified</h3><p style="margin-top:8px">accept-progress · accept-equivalent · reject-no-improvement · reject-regression · reject-compile-fail. <strong>"Reject" means reject</strong>, and the model is told <em>why</em>.</p></div>
+    <div class="card"><h3>A champion is kept</h3><p style="margin-top:8px">The best measured state is tracked across the whole run. <strong>A bad fix can never overwrite a good state.</strong> Stagnation is detected; token-burning stops.</p></div>
+    <div class="card"><h3>The testbench is attacked</h3><p style="margin-top:8px"><strong>Mutation testing</strong>: inject bugs into the <em>passing</em> RTL; a testbench that kills no mutants is exposed as vacuous. "Deleting a test is never a fix" is a hard rule.</p></div>
+    <div class="card"><h3>Debugging reads the waves</h3><p style="margin-top:8px">Triage runs a bounded probe loop over the <strong>VCD</strong>: the model requests signal windows, the harness answers from the dump. Evidence, not vibes.</p></div>
+  </div>
+  <aside class="notes">These four mechanisms are the "convergence engineering" the naive agent lacks; each one exists because a measured run failed without it (the code comments cite the run numbers). Favorite war story, run 18: one-shot triage blamed the testbench five times in a row while a one-line RTL bug sat untouched. That's why the waveform probe loop exists.</aside>
+</section>
+
+<!-- 26 · RTL Forge honest measurements -->
+<section class="slide" data-act="Act V · RTL Forge">
+  <div class="kicker">Act V · RTL Forge · what we measured</div>
+  <h2>The experiment that humbled me</h2>
+  <p style="margin-top:-10px; margin-bottom:14px" class="small">Idea: harvest each model's recurring lint errors → distill rules → inject into its next generation prompt. A/B, 5 designs, real Verilator.</p>
+  <table class="tbl">
+    <tr><th>error class</th><th>no rules</th><th>rules injected</th><th></th></tr>
+    <tr class="frag"><td>unsized literals</td><td>2/5</td><td>0/5</td><td class="ok">rule helped</td></tr>
+    <tr class="frag"><td>parameter headers</td><td>3/5</td><td>1/5</td><td class="ok">rule helped</td></tr>
+    <tr class="frag"><td>block placement</td><td>3/5</td><td>3/5</td><td>no change</td></tr>
+    <tr class="frag"><td><strong>complex ports</strong></td><td><strong>0/5</strong></td><td><strong class="no">3/5</strong></td><td class="no"><strong>rule backfired</strong></td></tr>
+  </table>
+  <div class="frag" style="margin-top:20px">
+    <p style="font-size:22px; text-align:center">The backfiring rule was the only one that <strong>named the anti-pattern</strong>: naming the wrong form <em>primed the model to produce it</em>. The <span class="accent">pink elephant effect</span>.</p>
+  </div>
+  <div class="frag" style="margin-top:14px">
+    <p style="font-size:20px; text-align:center" class="small">And the control arm swung 37 → 24 errors with <em>no change at all, at temperature 0</em>. Run-to-run noise ≈ 40%. <strong style="color:var(--ink)">Measure, don't vibe, and know your noise floor.</strong></p>
+  </div>
+  <aside class="notes">Best slide of the deck: build it row by row and land on the red row. "Don't think of a pink elephant." Rephrasing the rule positively made the backfire vanish. Then the meta-lesson: the control arm moved 35% with NOTHING changed, at temperature zero. If your eval can't detect its own noise floor, it detects nothing. Aggregate numbers hid opposing per-class effects. This is why RTL Forge ships its own benchmark suite, diffable across git commits.</aside>
+</section>
+
+<!-- 26b · RTL Forge learning + federation -->
+<section class="slide" data-act="Act V · RTL Forge">
+  <div class="kicker">Act V · RTL Forge · learning</div>
+  <h2>The loop learns between runs, and what it learns is text</h2>
+  <div class="grid2" style="flex:1; align-content:center; gap:18px">
+    <div class="card frag"><h3>Harvest, per model</h3><p style="margin-top:8px">A training mode runs the pipeline over a spec corpus and harvests each model's <strong>recurring failure classes</strong> from real lint and simulation. The catalogs are <strong>keyed by model</strong>: a 24B's habits are not a 70B's habits.</p></div>
+    <div class="card frag"><h3>Distill, with guardrails</h3><p style="margin-top:8px">Failures become <strong>positively-phrased rules</strong> (the pink-elephant lesson from the last slide is enforced, not just remembered). Embedding-based dedup detects <strong>saturation</strong>: when new runs only paraphrase known rules, harvesting stops itself.</p></div>
+    <div class="card frag"><h3>Remember what fixed what</h3><p style="margin-top:8px">Cross-run memory keys <strong>fix recipes by failure signature</strong>: the next run that hits the same signature sees what worked last time: evidence-carrying reflow across runs, not just within one.</p></div>
+    <div class="card frag" style="border-color:rgba(57,135,229,.45)"><h3 style="color:#9cc3f2">The federated possibility</h3><p style="margin-top:8px">Rules, recipes and skills are <strong>kilobytes of text</strong>: no weights, no RTL. Teams could exchange <em>distilled engineering judgment</em> while designs never leave the building: <strong>federated learning of rules, not gradients</strong>. The artifact is auditable: you can read what your peers taught your agent.</p></div>
+  </div>
+  <div class="frag" style="margin-top:14px">
+    <p style="font-size:19px; text-align:center" class="small">Measured caveat: a too-weak model harvests <em>noise</em>, not lessons: there is a capability floor under which "training" pollutes the catalog. The guardrails exist because we hit this.</p>
+  </div>
+  <aside class="notes">Bridge from the humbling experiment: the A/B taught us HOW to learn safely (positive phrasing, per-model catalogs, noise-floor awareness), and this slide is that machinery productized. Harvest: train --auto over a corpus, real Verilator in the loop. Saturation: nomic-embed similarity, paraphrase detection ~0.94, stop threshold 0.9. Recipes: triage memory keyed by failure signature, injected into fix prompts. Federated part is honestly a POSSIBILITY, not shipped: the point is architectural: because the learned artifact is text, sharing it is a policy decision, not an ML infrastructure project. Contrast with fine-tuning: no data pooling, no weight exchange, fully auditable. Capability-floor war story: a 1.2B "trained" itself into leaking spec prose into RTL rules; high-cardinality noise even defeated the saturation stop. Floors are real.</aside>
+</section>
+
+<!-- 26c · RTL Forge demo teaser -->
+<section class="slide" data-act="Act V · RTL Forge">
+  <div class="kicker">Act V · RTL Forge · the receipts</div>
+  <h2>You don't have to take my word for it: demo at the end</h2>
+  <div class="grid3" style="align-content:center; gap:16px; margin-top:6px">
+    <div class="card tile frag"><div class="v">1 page</div><div class="l">of plain English in: a register block<br>with interrupt logic</div></div>
+    <div class="card tile frag"><div class="v">13</div><div class="l">stages ran overnight, unattended:<br>spec, RTL, formal, testbench, judge</div></div>
+    <div class="card tile frag"><div class="v">50/54</div><div class="l">of its own tests pass, re-measured<br><strong>live on stage</strong> with real Verilator</div></div>
+  </div>
+  <div class="cols" style="margin-top:18px; align-items:stretch">
+    <div class="card frag" style="flex:1"><h3>It proved a bug on itself</h3><p style="margin-top:8px">SymbiYosys found a <strong>counterexample</strong>: <code>irq</code> lags its enable by one cycle, violating its own property. The simulation failures point at the <em>same</em> defect. Two detectors, one bug.</p></div>
+    <div class="card frag" style="flex:1"><h3>And the judge says FAIL</h3><p style="margin-top:8px">Final verdict: <strong>77/100, FAIL</strong>. Weighted criteria, formal counterexample charged, per-requirement traceability. <strong>The system does not bluff.</strong> That honesty is the demo.</p></div>
+  </div>
+  <div class="frag" style="margin-top:14px">
+    <p style="font-size:19px; text-align:center" class="small">Deterministic on purpose: the demo re-verifies finished artifacts. No model call, no network.</p>
+  </div>
+  <aside class="notes">Pure teaser: 30 seconds, no clicks beyond the fragments. Set the contract: at the end I'll show the web GUI on this exact run (stage by stage: the faithful spec, the RTL, the formal counterexample, the judge's weighted verdict), then re-run its own 54-test bench live in the terminal with real Verilator. Emphasize the closing line: everyone demos success; this demos honest self-measurement, a FAIL verdict the system itself computed and stands behind. That's the difference between a code generator and an engineering loop.</aside>
+</section>
+
+<!-- 27 · chipchamp intro -->
+<section class="slide" data-act="Act V · chipchamp">
+  <div class="kicker">Act V · chipchamp</div>
+  <h2>Claude Code, if it had grown up in a fab</h2>
+  <div class="cols" style="align-items:center">
+    <div class="col">
+      <ul class="airy">
+        <li>An agentic CLI over an <strong>existing</strong> RTL codebase: it queries an elaborated <strong>design database</strong> (hierarchy, clock domains, FSMs, fan-in cones), not a pile of files</li>
+        <li><strong>17 EDA adapters</strong> as first-class tools: Verilator, GHDL, cocotb, Yosys, SymbiYosys, eqy, OpenSTA, <strong>LibreLane</strong>, nextpnr, Vivado, <strong>FABulous</strong>, spike…</li>
+        <li><strong>96 tools</strong>, disclosed progressively: the model sees a 31-tool core, 72% less context per request</li>
+        <li>Waveforms &amp; coverage are <strong>queried, never dumped</strong>: <code>wave.when</code>, <code>cov.holes</code>, first-divergence compare</li>
+      </ul>
+    </div>
+    <div class="col" style="flex:.75">
+      <div class="term" style="font-size:15.5px">
+        <div class="dim"># any provider, including fully local</div>
+        <div><span class="b">$</span> chipchamp <span class="dim">--provider</span> ollama</div>
+        <div class="dim">╭──────────────────────────────╮</div>
+        <div class="dim">│  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓  │</div>
+        <div class="dim">│  ▓▓ <span class="w">chipchamp</span> ▓▓▓▓▓▓▓▓▓▓▓▓▓  │</div>
+        <div class="dim">│  ▓▓ <span class="y">agentic RTL &amp; DV</span> ▓▓▓▓▓▓  │</div>
+        <div class="dim">│  ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓ <span class="b">2631</span> ▓  │</div>
+        <div class="dim">╰──────────────────────────────╯</div>
+        <div><span class="g">✔</span> design DB · 176 modules · 6 s</div>
+      </div>
+      <p class="small" style="margin-top:12px; text-align:center">The banner is an ASCII die shot, lot-code stamped with the git revision.</p>
+    </div>
+  </div>
+  <aside class="notes">The rebrand wink: the tool was built with the product name as a single variable: brand.set_name("chipchamp") renames the banner, env vars, testbench markers, even the dot-directory. The tool anticipated its own renaming. Substance: the design DB is what separates this from "coding agent pointed at .sv files": the agent asks structured questions (what's in this clock domain? what drives this signal?) instead of grepping. The slang front end elaborated the full ibex RISC-V core (176 modules) in about 6 seconds.</aside>
+</section>
+
+<!-- 28 · chipchamp trust chain -->
+<section class="slide" data-act="Act V · chipchamp">
+  <div class="kicker">Act V · chipchamp · the core idea</div>
+  <h2>Success is structurally unforgeable</h2>
+  <div style="flex:1; display:flex; align-items:center; justify-content:center">
+    <svg viewBox="0 0 1000 300" style="width:94%">
+      <defs><marker id="ar3" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0 0L10 5L0 10z" fill="#6b7a8f"/></marker></defs>
+      <g font-family="system-ui" text-anchor="middle">
+        <rect x="10" y="90" width="170" height="70" rx="12" fill="#111a28" stroke="#3a4658"/><text x="95" y="120" fill="#f2f6fb" font-size="19">agent</text><text x="95" y="143" fill="#6b7a8f" font-size="14">wants to say "done"</text>
+        <rect x="240" y="90" width="190" height="70" rx="12" fill="#111a28" stroke="#3a4658"/><text x="335" y="120" fill="#f2f6fb" font-size="19">real tool runs</text><text x="335" y="143" fill="#6b7a8f" font-size="14">sim · lint · synth · formal</text>
+        <rect x="475" y="90" width="230" height="70" rx="12" fill="rgba(57,135,229,.13)" stroke="#3987e5" stroke-width="2"/><text x="590" y="120" fill="#9cc3f2" font-size="18" font-weight="700">signed job records</text><text x="590" y="143" fill="#7ba7d8" font-size="13.5">the model cannot write these</text>
+        <rect x="750" y="90" width="240" height="70" rx="12" fill="rgba(47,191,113,.10)" stroke="#2fbf71" stroke-width="2"/><text x="870" y="114" fill="#7fd7a9" font-size="18" font-weight="700">policy gates</text><text x="870" y="136" fill="#5d8f7c" font-size="13">lint · regression · coverage · LEC …</text><text x="870" y="152" fill="#5d8f7c" font-size="13">+ anti-gaming detectors</text>
+        <g stroke="#6b7a8f" stroke-width="2.5">
+          <line x1="180" y1="125" x2="233" y2="125" marker-end="url(#ar3)"/>
+          <line x1="430" y1="125" x2="468" y2="125" marker-end="url(#ar3)"/>
+          <line x1="705" y1="125" x2="743" y2="125" marker-end="url(#ar3)"/>
+        </g>
+        <!-- forbidden path -->
+        <path d="M95 160 C 200 260, 700 260, 862 165" stroke="#e05d5d" stroke-width="2.5" stroke-dasharray="8 6" fill="none"/>
+        <text x="490" y="252" fill="#e05d5d" font-size="17" font-style="italic">"trust me, it passes": this path does not exist</text>
+        <text x="500" y="40" fill="#aab8ca" font-size="18">report.done is the <tspan font-weight="700" fill="#f2f6fb">only</tspan> way to claim success: it re-validates every gate against the records</text>
+      </g>
+    </svg>
+  </div>
+  <div class="grid3" style="gap:14px">
+    <div class="card" style="padding:14px 18px"><p style="font-size:16.5px"><strong>Anti-gaming gates:</strong> green-by-deletion, disabled assertions, shrunk timeouts, pinned seeds: all detected, all block completion</p></div>
+    <div class="card" style="padding:14px 18px"><p style="font-size:16.5px"><strong>Evidence bundles</strong> are hash-signed and tamper-evident, auditable long after the session</p></div>
+    <div class="card" style="padding:14px 18px"><p style="font-size:16.5px"><strong>Subagents physically lack</strong> the "declare success" tool: only the orchestrator can, and only through the gates</p></div>
+  </div>
+  <aside class="notes">The one-sentence version, worth saying twice: "the path from 'agent says done' to 'human trusts it' never passes through model text." This is Act I's measured-vs-estimated distinction, turned into architecture. And recall Act IV's warning that agents delete failing tests: here it's not discouraged, it's DETECTED: the anti-gaming scan re-runs at completion time against the diff. Task classes map to verification ladders: a docs change needs nothing; a functional RTL change needs lint+regression+coverage; a physical change needs DRC/LVS/timing. The agent cannot lower its own bar.</aside>
+</section>
+
+<!-- 29 · chipchamp verticals -->
+<section class="slide" data-act="Act V · chipchamp">
+  <div class="kicker">Act V · chipchamp · how deep the loop goes</div>
+  <h2>Prompt to GDSII, measured</h2>
+  <div class="grid2" style="flex:1; align-content:center; gap:16px">
+    <div class="card tint-blue"><h3>RTL → GDSII <span class="pill" style="margin-left:8px">LibreLane · SKY130</span></h3>
+      <ul class="blist" style="font-size:16px">
+        <li>Full physical signoff as agent gates: <strong>DRC 0 · LVS 0 · antenna 0 · WNS +1.64 ns</strong></li>
+        <li>213 KB of GDSII out</li>
+        <li><em>Physical feedback to RTL</em>: area by source line, power from real activity, critical path → <code>file:line</code></li>
+      </ul></div>
+    <div class="card frag tint-aqua"><h3>Optimize, with proof <span class="pill" style="margin-left:8px">eqy</span></h3>
+      <ul class="blist" style="font-size:16px">
+        <li>Coverage finds 28 dead flops; the agent narrows the logic</li>
+        <li><strong>Equivalence checker proves the edit safe</strong></li>
+        <li>400 µm² recovered; the whole loop takes ~5 seconds</li>
+      </ul></div>
+    <div class="card frag tint-orange"><h3>FPGA &amp; eFPGA <span class="pill" style="margin-left:8px">nextpnr · Vivado · FABulous</span></h3>
+      <ul class="blist" style="font-size:16px">
+        <li>iCE40 bitstream in ~2 s; Vivado xc7a35t in ~2 min, timing met</li>
+        <li>Drives <strong>FABulous eFPGA fabrics</strong>, the technology at the center of <em>this school's tapeout</em></li>
+      </ul></div>
+    <div class="card frag tint-violet"><h3>RISC-V <span class="pill" style="margin-left:8px">spike · RISCOF</span></h3>
+      <ul class="blist" style="font-size:16px">
+        <li>Lock-step co-simulation against the reference model</li>
+        <li><span class="mono" style="font-size:14.5px">"divergence at instruction #2: core executed PC 0x1040, reference 0x1008 (add gp, ra, sp)"</span></li>
+        <li>A <em>named instruction</em>, not "test 7 fails"</li>
+      </ul></div>
+  </div>
+  <p class="frag small" style="text-align:center; margin-top:10px">Stress-tested overnight, on local models: 9 models × 8 scenarios, 11 hours unattended, 27/30 platform checks passing.</p>
+  <aside class="notes">Each card is a live, measured vertical: every number came from a real run on my machine with open tools. The FABulous card is the local hook: the HeiChips tapeout integrates projects around a shared eFPGA fabric, and this agent already speaks that flow. The RISC-V line is my favorite: the difference between "test 7 fails" and "instruction #2 diverged at a named PC" is the difference between a night of debugging and a minute of reading.</aside>
+</section>
+
+<!-- 30 · chipchamp local models -->
+<!-- HIDDEN: merged into the previous slide as its bottom line
+<section class="slide" data-act="Act V · chipchamp">
+  <div class="kicker">Act V · chipchamp · does it hold up?</div>
+  <h2>Stress-tested overnight, on local models</h2>
+  <div class="grid3" style="align-content:center; gap:16px">
+    <div class="card tile"><div class="v">9 × 8</div><div class="l">local models × scenarios,<br>11 hours, unattended</div></div>
+    <div class="card tile"><div class="v">27/30</div><div class="l">platform feature sweep passing<br>(model-free harness checks)</div></div>
+    <div class="card tile"><div class="v">10 → 8</div><div class="l">findings logged → fixed,<br>each with a commit hash</div></div>
+  </div>
+  <div class="frag card" style="margin-top:18px">
+    <p style="font-size:20px; text-align:center">The benchmark suite measures <strong>the loop, not just the model</strong>: mutation repair, triage fidelity, evidence integrity.<br><span class="small">Public benchmarks like VerilogEval are generation-only, and they saturate. The loop is the product, so that's what gets benchmarked.</span></p>
+  </div>
+  <aside class="notes">The nightly run: nine local models (LM Studio), eight scenarios against real EDA flows, unattended overnight; the platform's own triage clustered the failures by morning. The findings became fixes with commit hashes; the agent platform debugging itself is the recursion that makes this fun. Best local composite was a ~35B MoE coder: consumer hardware, no API key. This closes Act IV's promise: local + open really does work, with the right loop.</aside>
+</section>
+-->
+
+
+<!-- 30a · chipchamp vs claude code -->
+<section class="slide" data-act="Act V · chipchamp">
+  <div class="kicker">Act V · chipchamp · versus a general coding agent</div>
+  <h2>What Claude Code structurally cannot do here</h2>
+  <div style="flex:1; display:flex; align-items:center">
+    <table class="tbl">
+      <tr><th style="width:34%">a general cloud agent</th><th style="width:8%"></th><th>chipchamp</th></tr>
+      <tr><td>needs a cloud API, so NDA'd RTL and PDKs leave the building</td><td class="accent">→</td><td><strong>air-gapped</strong>: free local models close real silicon flows; PDK reads are refused <em>below</em> the model</td></tr>
+      <tr><td>"done" is as good as the model's discipline that day</td><td class="accent">→</td><td><strong>evidence-gated closure</strong>: report.done is rejected until class-specific gates are paid with post-edit proof</td></tr>
+      <tr><td>bash runs are ephemeral; the evidence trail is whatever got narrated</td><td class="accent">→</td><td><strong>provenance ledger</strong>: every job has an id, repro command, input hashes (incl. fabric state), greppable logs</td></tr>
+      <tr><td>one model, fixed for the session</td><td class="accent">→</td><td><strong>mid-task routing</strong>: hot-swap to the next local model on refusal / timeout / stall, same transcript</td></tr>
+    </table>
+  </div>
+  <p class="frag" style="text-align:center; font-size:20px">Live proof of row 2: a local model edited its design <em>after</em> its last proof and tried to close: <span style="color:var(--bad)">rejected</span>. It re-proved with a fresh bitstream, then closed. <span class="small">The harness enforced honesty; the model learned it.</span></p>
+  <aside class="notes">Be fair: given a shell, Claude Code can drive the same CLI tools step by step. The rows are STRUCTURAL properties, not skill gaps. Row 1 is the one that lands with this audience: export-controlled PDKs cannot go to a cloud API, full stop. Row 2 happened verbatim in a recorded run: first report.done rejected because the design changed after the last passing bitstream; the model re-proved (job J-0367) and only then closed. That transcript is the demo.</aside>
+</section>
+
+<!-- 30b · local models + router -->
+<section class="slide" data-act="Act V · chipchamp">
+  <div class="kicker">Act V · chipchamp · which local models, and who drives</div>
+  <h2>Local models have shapes; the router knows them</h2>
+  <div class="cols" style="align-items:center">
+    <div class="col" style="flex:1.25">
+      <table class="tbl" style="font-size:16.5px">
+        <tr><th>model</th><th>shape</th></tr>
+        <tr><td class="mono">qwen3.6:35b-a3b</td><td><strong>the closer</strong>: authored + debugged + closed every eFPGA demo; best debugger</td></tr>
+        <tr><td class="mono">gpt-oss-120b</td><td>cleanest RTL author; weak self-diagnosis, can claim unearned wins</td></tr>
+        <tr><td class="mono">nemotron-nano-4b</td><td>fast, reuses IP, decomposes; RTL rarely lints clean first try</td></tr>
+        <tr><td class="mono">gpt-oss-20b</td><td>fast but chronically refuses mid-task</td></tr>
+      </table>
+      <p class="small" style="margin-top:10px">Profiles score each model per capability (author / debug / plan / verify / speed), seeded from measured campaigns, not vibes.</p>
+    </div>
+    <div class="col" style="flex:1">
+      <div class="term" style="font-size:15px">
+        <div><span class="b">$</span> chipchamp <span class="dim">→</span> /router on</div>
+        <div class="dim"># mid-task, the current model stalls…</div>
+        <div><span class="y">⇄</span> model_switch gpt-oss-20b → qwen3.6:35b</div>
+        <div class="dim">   reason: refusal · transcript preserved</div>
+        <div><span class="g">✔</span> task closed by the fallback</div>
+      </div>
+      <p class="small" style="margin-top:12px; text-align:center">A 3-model relay on one transcript is validated end-to-end: refusal → swap → stall → swap → close.</p>
+    </div>
+  </div>
+  <aside class="notes">The table is this machine's measured inventory (LM Studio + Ollama). The insight: local models fail in RELIABLE, distinguishable ways (refusal, stall, give-up, timeout), so failure signatures are routable events. The router ranks the pool by capability profile, and the loop hot-swaps the gateway on a signature while keeping the transcript, so the fallback inherits all context. qwen3.6:35b (MoE, ~3B active) is the workhorse: closed the waveform debug in 30 steps and authored-to-bitstream twice, all on consumer hardware.</aside>
+</section>
+
+<!-- 30c · skills + library -->
+<section class="slide" data-act="Act V · chipchamp">
+  <div class="kicker">Act V · chipchamp · packaged expertise</div>
+  <h2>Skills teach the loop; the library feeds it</h2>
+  <div class="grid2" style="flex:1; align-content:center; gap:16px">
+    <div class="card">
+      <h3>Skills <span class="pill" style="margin-left:8px">SKILL.md playbooks</span></h3>
+      <p style="margin-top:8px; font-size:17px">Expert procedure as versioned markdown. Invoked manually (<code>/waveform-debug</code>, <code>/alwavelets-viewer-control</code>) or auto-matched from the task. The skill index rides the system prompt; the playbook loads on demand.</p>
+      <div class="term" style="font-size:14.5px; margin-top:10px">
+        <div><span class="b">$</span> chipchamp skills add ./team-skills</div>
+        <div><span class="b">$</span> chipchamp skills list</div>
+        <div><span class="g">✔</span> waveform-debug · alwavelets-viewer-control</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>IP library <span class="pill" style="margin-left:8px">my private library · 134 components</span></h3>
+      <p style="margin-top:8px; font-size:17px">Manifest-indexed component libraries with <strong>name-independent semantic match</strong>: the agent asks for "async FIFO with gray-code pointers", not a filename, then fetches RTL + C++ golden ref together.</p>
+      <div class="term" style="font-size:14.5px; margin-top:10px">
+        <div><span class="b">$</span> chipchamp library add ~/rtllib-pillars</div>
+        <div><span class="b">$</span> chipchamp library match <span class="y">"async fifo"</span></div>
+        <div><span class="b">$</span> chipchamp library fetch cdc_fifo</div>
+      </div>
+    </div>
+  </div>
+  <p class="frag small" style="text-align:center; margin-top:6px">Both are how a team's know-how outlives the session: the skill is the <em>how</em>, the library is the <em>what</em>, and the agent reuses both instead of reinventing them.</p>
+  <aside class="notes">Skills follow the Anthropic Agent Skills format: a directory with SKILL.md, name + description frontmatter. The shipped skills encode real campaign lessons: waveform-debug is "narrow before you render"; the viewer-control skill drives a live terminal waveform session over MCP. The library is my private collection of 134 components with manifests and golden reference models; `match` is semantic (embedding cache via `reindex`), so reuse survives renaming. In live runs, small models DID pull library components instead of writing from scratch; that's the reuse behavior the platform rewards.</aside>
+</section>
+
+<!-- 30d · implemented agentic capabilities -->
+<section class="slide" data-act="Act V · chipchamp">
+  <div class="kicker">Act V · chipchamp · what is implemented today</div>
+  <h2>The agentic loop, capability by capability</h2>
+  <div class="grid3" style="flex:1; align-content:center; gap:13px">
+    <div class="card" style="padding:13px 16px"><h3 style="font-size:16px">Progressive disclosure</h3><p style="font-size:14.5px; margin-top:5px">31-tool core, groups load on demand: 72% less context. Mis-named tools get did-you-mean, not "unknown"</p></div>
+    <div class="card" style="padding:13px 16px"><h3 style="font-size:16px">Evidence gates</h3><p style="font-size:14.5px; margin-top:5px">report.done re-validates class-specific gates against signed job records; anti-gaming detectors block green-by-deletion</p></div>
+    <div class="card" style="padding:13px 16px"><h3 style="font-size:16px">Context compaction</h3><p style="font-size:14.5px; margin-top:5px">old tool results evict to their job ids under a live budget, so long runs survive small local context windows</p></div>
+    <div class="card" style="padding:13px 16px"><h3 style="font-size:16px">Teaching errors</h3><p style="font-size:14.5px; margin-top:5px">every miss names the fix: id shape + recent jobs, path did-you-mean, "not available to your role" vs unknown</p></div>
+    <div class="card" style="padding:13px 16px"><h3 style="font-size:16px">Model routing</h3><p style="font-size:14.5px; margin-top:5px">capability profiles per local model; hot-swap on refusal / stall / timeout, transcript preserved</p></div>
+    <div class="card" style="padding:13px 16px"><h3 style="font-size:16px">Subagent orchestration</h3><p style="font-size:14.5px; margin-top:5px">least-privilege roles, shared job store; only the orchestrator can claim success, and only through the gates</p></div>
+    <div class="card" style="padding:13px 16px"><h3 style="font-size:16px">Budgets &amp; policy</h3><p style="font-size:14.5px; margin-top:5px">token / CPU / license ledgers the model cannot talk its way past; PDK reads refused below the model</p></div>
+    <div class="card" style="padding:13px 16px"><h3 style="font-size:16px">MCP, both directions</h3><p style="font-size:14.5px; margin-top:5px">consumes external MCP servers as typed tools (live waveform viewer control); serves its own design DB over MCP</p></div>
+    <div class="card" style="padding:13px 16px"><h3 style="font-size:16px">Skills</h3><p style="font-size:14.5px; margin-top:5px">SKILL.md playbooks, auto-matched or /invoked. Shipped: waveform-debug, viewer control; teams add their own</p></div>
+  </div>
+  <p class="frag small" style="text-align:center; margin-top:8px">Plus: session resume · experiment recorder for blind model campaigns · prompt-injection scanning on tool output · reproducible job records with input hashes</p>
+  <aside class="notes">This is the honest inventory slide: everything named here is implemented and exercised in the repo's test suite today, no roadmap items. The three rows to dwell on: evidence gates (the trust-chain slide made the argument; this confirms it's real), teaching errors (the single biggest reason small local models close tasks: every dead end teaches instead of stalling), and compaction (a small-context local model surviving a 40-step run because old tool results collapse to job ids it can still query). Skills close the loop back to the library slide: procedure and IP, both versioned, both reusable.</aside>
+</section>
+
+<!-- ════════════════════════════════════════════════════════════
+     CLOSE
+     ════════════════════════════════════════════════════════════ -->
+
+<!-- 31 · the engineer -->
+<section class="slide" data-act="Close">
+  <div class="kicker">Close</div>
+  <h2>What happens to the engineer?</h2>
+  <div style="flex:1; display:flex; align-items:center; justify-content:center">
+    <table class="tbl" style="max-width:980px">
+      <tr><th style="width:42%">from</th><th style="width:8%"></th><th>to</th></tr>
+      <tr><td>writing RTL by hand</td><td class="accent">→</td><td>writing <strong>specs that survive contact with an agent</strong></td></tr>
+      <tr><td>running the tools</td><td class="accent">→</td><td><strong>auditing the verdicts</strong> the agent earned</td></tr>
+      <tr><td>debugging syntax</td><td class="accent">→</td><td>judging <strong>architecture, constraints, corner cases</strong></td></tr>
+    </table>
+  </div>
+  <p class="frag" style="text-align:center; font-size:26px">Verification taste becomes <strong>more</strong> valuable, not less.<br><span style="font-size:21px" class="small">The bottleneck moves from typing speed to judgment.</span></p>
+  <aside class="notes">Land carefully: half this room is deciding on a career. This is elevation, not replacement: somebody has to audit the verdicts, and the trustworthiness gap says that job is growing. The industry is short tens of thousands of chip engineers; agents are how the field scales, and the people who understand BOTH sides, silicon and agents, are the scarcest of all. That could be you, starting this week.</aside>
+</section>
+
+<!-- 32 · three take-homes -->
+<section class="slide" data-act="Close">
+  <div class="kicker">Close</div>
+  <h2>Three things to take home</h2>
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; gap:22px">
+    <div class="card frag" style="padding:26px 30px"><p style="font-size:24px"><strong class="accent">1.</strong>&nbsp; Hardware has what agents need most: <strong>cheap, deterministic oracles</strong>. It's a leading domain for agentic AI, not a lagging one.</p></div>
+    <div class="card frag" style="padding:26px 30px"><p style="font-size:24px"><strong class="accent">2.</strong>&nbsp; Trust must be <strong>engineered, not narrated</strong>: evidence the model can't forge, gates it can't lower, tests it can't delete.</p></div>
+    <div class="card frag" style="padding:26px 30px"><p style="font-size:24px"><strong class="accent">3.</strong>&nbsp; <strong>Measure, don't vibe.</strong> Aggregates hide opposing effects, and your noise floor is higher than you think.</p></div>
+  </div>
+  <aside class="notes">Slow. Three sentences, pause between each. These are the compressed versions of Acts II, V, and the pink-elephant lesson.</aside>
+</section>
+
+<!-- 33 · thank you -->
+<section class="slide" data-act="">
+  <div style="flex:1; display:flex; flex-direction:column; justify-content:center; text-align:center">
+    <h1 style="font-size:52px">The hackathon starts this week.<br><span class="accent">Bring an agent.</span></h1>
+    <div style="margin-top:48px; display:flex; gap:18px; justify-content:center">
+      <div class="card tint-blue" style="padding:16px 22px; text-align:left">
+        <p class="mono" style="font-size:18px; color:var(--ink)">RTL Forge</p>
+        <p class="small mono" style="font-size:13.5px">github.com/riadhbenabdelhamid/RTLForge</p>
+      </div>
+      <div class="card tint-aqua" style="padding:16px 22px; text-align:left">
+        <p class="mono" style="font-size:18px; color:var(--ink)">chipchamp</p>
+        <p class="small mono" style="font-size:13.5px">github.com/riadhbenabdelhamid/chipchamp</p>
+      </div>
+      <div class="card tint-warn" style="padding:16px 22px; text-align:left">
+        <p class="mono" style="font-size:18px; color:var(--ink)">alwavelets</p>
+        <p class="small mono" style="font-size:13.5px">github.com/riadhbenabdelhamid/alwavelets</p>
+        <p class="small mono" style="font-size:13.5px">riadhbenabdelhamid.github.io/alwavelets</p>
+      </div>
+    </div>
+    <p style="margin-top:44px; font-size:22px">Riadh Ben Abdelhamid</p>
+    <p style="margin-top:8px"><span class="mono" style="font-size:19px; color:var(--ink-2)">riadh.benabdelhamid@gmail.com</span></p>
+    <p style="margin-top:26px; font-size:26px; color:var(--ink)">Questions?</p>
+  </div>
+  <aside class="notes">Call to action: this week they'll use LibreLane, KLayout, the IHP PDK: every piece of the agent playground from Act IV. Challenge them: pick one repetitive step of your hackathon flow and hand it to an agent, then audit what comes back. Offer: find me during the week, I'll help you set it up.</aside>
+</section>
+
+</div></div>
+
+<!-- HUD -->
+<div id="hud"><div id="bar"></div></div>
+<div id="act"></div>
+<div id="meta"></div>
+<button id="themebtn" title="Light / dark (press L)">◐</button>
+
+<div id="notesbox">
+  <div id="timer">00:00</div>
+  <h4>Current slide</h4>
+  <div class="nbody" id="nbody"></div>
+</div>
+
+<div id="citesbox">
+  <h4>Sources for this slide · press C to close</h4>
+  <ol id="cbody"></ol>
+</div>
+
+<div id="helpbox"><div class="card">
+  <h3 style="margin-bottom:14px">Controls</h3>
+  <table>
+    <tr><td>→ / space</td><td>next step / slide</td></tr>
+    <tr><td>←</td><td>previous</td></tr>
+    <tr><td>home / end</td><td>first / last slide</td></tr>
+    <tr><td>n</td><td>timer + slide title</td></tr>
+    <tr><td>c</td><td>sources for this slide</td></tr>
+    <tr><td>l</td><td>light / dark theme</td></tr>
+    <tr><td>f</td><td>fullscreen</td></tr>
+    <tr><td>p</td><td>print → save as PDF</td></tr>
+    <tr><td>?</td><td>this help</td></tr>
+  </table>
+</div></div>
+
+<div id="tip"></div>
+
+<script>
+(function(){
+  const slides=[...document.querySelectorAll('.slide')];
+  const bar=document.getElementById('bar'), meta=document.getElementById('meta'),
+        act=document.getElementById('act'), notesbox=document.getElementById('notesbox'),
+        nbody=document.getElementById('nbody'), helpbox=document.getElementById('helpbox'),
+        citesbox=document.getElementById('citesbox'), cbody=document.getElementById('cbody'),
+        tip=document.getElementById('tip'), stage=document.getElementById('stage');
+  let cur=-1, t0=null;
+
+  /* scale stage to viewport */
+  function fit(){
+    const s=Math.min(innerWidth/1280, innerHeight/720);
+    stage.style.transform=`scale(${s})`;
+  }
+  addEventListener('resize',fit); fit();
+
+  function frags(s){
+    const fs=[...s.querySelectorAll('.frag')];
+    return fs.map((f,i)=>[f.dataset.order?parseFloat(f.dataset.order):i,i,f])
+             .sort((a,b)=>a[0]-b[0]||a[1]-b[1]).map(x=>x[2]);
+  }
+  /* spotlight handoff: the most recently revealed .spot in a slide
+     carries .hl; earlier ones return to normal styling */
+  function updateSpots(s){
+    const sp=[...s.querySelectorAll('.spot')];
+    if(!sp.length)return;
+    sp.forEach(el=>el.classList.remove('hl'));
+    const vis=sp.filter(el=>!el.classList.contains('frag')||el.classList.contains('on'));
+    if(vis.length)vis[vis.length-1].classList.add('hl');
+  }
+
+  function show(i,fragAll){
+    i=Math.max(0,Math.min(slides.length-1,i));
+    if(i===cur)return;
+    if(cur>=0){slides[cur].classList.remove('active','play')}
+    cur=i;
+    const s=slides[cur];
+    s.classList.add('active');
+    /* restart terminal animations; manual-play slides wait for a keypress
+       (unless we arrive with everything revealed, e.g. deep link / back-nav) */
+    void s.offsetWidth;
+    if(!s.classList.contains('manual-play')||fragAll)s.classList.add('play');
+    /* fragments: hide all (or show all when navigating backwards) */
+    frags(s).forEach(f=>f.classList.toggle('on',!!fragAll));
+    updateSpots(s);
+    bar.style.width=((cur)/(slides.length-1)*100)+'%';
+    meta.textContent=(cur)+' / '+(slides.length-1);
+    act.textContent=s.dataset.act||'';
+    location.hash='#'+cur;
+    updateNotes();
+    if(cur>0&&!t0)t0=Date.now();
+  }
+
+  function next(){
+    const s=slides[cur];
+    if(s.classList.contains('manual-play')&&!s.classList.contains('play')){
+      void s.offsetWidth; s.classList.add('play'); return
+    }
+    const fs=frags(s), hidden=fs.find(f=>!f.classList.contains('on'));
+    if(hidden){hidden.classList.add('on'); updateSpots(s); return}
+    show(cur+1,false);
+  }
+  function prev(){
+    const s=slides[cur], fs=frags(s), on=[...fs].reverse().find(f=>f.classList.contains('on'));
+    if(on){on.classList.remove('on'); updateSpots(s); return}
+    if(s.classList.contains('manual-play')&&s.classList.contains('play')){s.classList.remove('play'); return}
+    show(cur-1,true);
+  }
+
+  function updateNotes(){
+    const t=slides[cur].querySelector('h2,h1');
+    let title=slides[cur].dataset.act||'·';
+    if(t){const cl=t.cloneNode(true); cl.querySelectorAll('br').forEach(b=>b.replaceWith(' ')); title=cl.textContent.replace(/\s+/g,' ').trim();}
+    nbody.textContent=title;
+    const c=slides[cur].querySelector('.cites');
+    cbody.innerHTML=c?c.innerHTML:'<li>No sources on this slide.</li>';
+  }
+  setInterval(()=>{
+    if(!t0)return;
+    const e=Math.floor((Date.now()-t0)/1000),
+          m=String(Math.floor(e/60)).padStart(2,'0'),
+          s=String(e%60).padStart(2,'0');
+    document.getElementById('timer').textContent=m+':'+s;
+  },1000);
+
+  addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' '||e.key==='PageDown'){e.preventDefault();next()}
+    else if(e.key==='ArrowLeft'||e.key==='PageUp'){e.preventDefault();prev()}
+    else if(e.key==='Home'){show(0,false)}
+    else if(e.key==='End'){show(slides.length-1,true)}
+    else if(e.key==='n'||e.key==='N'){notesbox.classList.toggle('show')}
+    else if(e.key==='c'||e.key==='C'){citesbox.classList.toggle('show')}
+    else if(e.key==='l'||e.key==='L'){toggleTheme()}
+    else if(e.key==='f'||e.key==='F'){document.fullscreenElement?document.exitFullscreen():document.documentElement.requestFullscreen()}
+    else if(e.key==='p'||e.key==='P'){print()}
+    else if(e.key==='?'){helpbox.classList.toggle('show')}
+    else if(e.key==='Escape'){helpbox.classList.remove('show');citesbox.classList.remove('show')}
+  });
+
+  /* theme: default dark; remembered per browser */
+  function toggleTheme(){
+    const light=!document.documentElement.classList.contains('light');
+    document.documentElement.classList.toggle('light',light);
+    try{localStorage.setItem('heichips-theme',light?'light':'dark')}catch(_){}
+  }
+  try{
+    if(localStorage.getItem('heichips-theme')==='light')
+      document.documentElement.classList.add('light');
+  }catch(_){}
+  const themebtn=document.getElementById('themebtn');
+  themebtn.addEventListener('click',e=>{e.stopPropagation();toggleTheme();themebtn.blur()});
+
+  /* click + swipe */
+  addEventListener('click',e=>{
+    if(helpbox.classList.contains('show')||notesbox.contains(e.target)||citesbox.contains(e.target))return;
+    (e.clientX>innerWidth*0.25)?next():prev();
+  });
+  let tx=null;
+  addEventListener('touchstart',e=>tx=e.touches[0].clientX,{passive:true});
+  addEventListener('touchend',e=>{
+    if(tx===null)return;
+    const dx=e.changedTouches[0].clientX-tx;
+    if(Math.abs(dx)>40)(dx<0?next():prev());
+    tx=null;
+  },{passive:true});
+
+  /* printing: reveal every step so the PDF shows finished slides */
+  addEventListener('beforeprint',()=>{
+    slides.forEach(sl=>{sl.classList.add('play'); frags(sl).forEach(f=>f.classList.add('on')); updateSpots(sl)});
+  });
+
+  /* chart tooltips */
+  document.querySelectorAll('[data-tip]').forEach(el=>{
+    el.addEventListener('mousemove',e=>{
+      tip.textContent=el.dataset.tip; tip.style.display='block';
+      tip.style.left=Math.min(innerWidth-320,e.clientX+16)+'px';
+      tip.style.top=(e.clientY+14)+'px';
+    });
+    el.addEventListener('mouseleave',()=>tip.style.display='none');
+  });
+
+  /* hash: "#12" = slide 12 with all steps shown; "#12.3" = slide 12
+     with only the first 3 reveal steps shown (rehearsal deep link) */
+  const hp=(location.hash||'').slice(1).split('.');
+  const h=parseInt(hp[0]), k=parseInt(hp[1]);
+  show(Number.isFinite(h)?h:0, Number.isFinite(h)&&!Number.isFinite(k));
+  if(Number.isFinite(k)){for(let j=0;j<k;j++)next()}
+  if(slides[cur].classList.contains('play')){slides[cur].classList.remove('play');void slides[cur].offsetWidth;slides[cur].classList.add('play')}
+})();
+</script>
+</body>
+</html>
